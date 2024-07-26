@@ -17,20 +17,17 @@ script = ExtResource("4_ua0e7")
 
 [node name="DialogueBubble" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 300.0
+offset_bottom = 46.0
 script = ExtResource("1_xuoxo")
-skip_input_action = "ui_cancel"
-hide_on_dialogue_end = null
 
 [node name="Panel" type="Panel" parent="."]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 0
-offset_right = 361.0
-offset_bottom = 130.0
+offset_right = 300.0
+offset_bottom = 46.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
@@ -51,7 +48,8 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "Lorem ipsum dolor sit amet, foo bar baz"
+text = "Lorem ipsum dolor sit amet, foo bar baz
+"
 fit_content = true
 custom_effects = [SubResource("RichTextEffect_kq87j"), SubResource("RichTextEffect_vm7ia"), SubResource("RichTextEffect_ieyfc")]
 
@@ -81,3 +79,6 @@ text = "Speaker"
 [node name="DialogueParser" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("1_cxv4l")
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+unique_name_in_owner = true

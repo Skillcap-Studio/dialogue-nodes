@@ -10,10 +10,14 @@ config_version=5
 
 [application]
 
-config/name="SkillcapDialogueNodes"
+config/name="Skillcap Dialogue Nodes"
 run/main_scene="res://examples/Demo1.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://icon.svg"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dialogue_nodes/plugin.cfg")
 
 [filesystem]
 

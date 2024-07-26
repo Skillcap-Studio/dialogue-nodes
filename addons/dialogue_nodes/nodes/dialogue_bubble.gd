@@ -1,6 +1,10 @@
 @tool
 class_name ScDialogueBubble
 extends Control
+# TODO: check if we need multiple options
+# TODO: add support for animated icon when user interaction is needed to advance
+# TODO: input blocking
+# TODO: support for tail, with multiple, configurable setups
 
 
 ## Triggered when a dialogue has started.
@@ -30,7 +34,7 @@ signal dialogue_ended
 @export var data: DialogueData:
 	set(value):
 		data = value
-		if _dialogue_parser:
+		if is_node_ready():
 			_dialogue_parser.data = value
 			variables = _dialogue_parser.variables
 			characters = _dialogue_parser.characters
@@ -38,11 +42,20 @@ signal dialogue_ended
 ## This is the value you set in the Dialogue Nodes editor.
 @export var start_id := &"START"
 
+@export_group("Auto Advance", "auto_advance_")
+## If [code]true[/code], the dialogue will advance automatically unless there are options.
+@export var auto_advance_enabled := false
+## Base delay.[br]Has no effect if [param auto_advance_enabled] is [code]false[/code].
+@export var auto_advance_base_delay := 0.15
+## Additional delay per character.[br]Has no effect if [param auto_advance_enabled] is
+## [code]false[/code].
+@export var auto_advance_character_delay := 0.04
+
 @export_group("Dialogue")
 ## Speed of scroll when using joystick/keyboard input.
 @export var scroll_speed := 4
 ## Input action used to skip dialogue animation.
-@export var skip_input_action := &"ui_cancel"
+@export var skip_input_action := &"ui_select"
 
 @export_group("Misc")
 ## Hide dialogue box at the end of a dialogue.
@@ -61,9 +74,10 @@ var _wait_effect: RichTextWait
 @onready var options: BoxContainer = %Options
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var _dialogue_parser: DialogueParser = %DialogueParser
+@onready var _lifetime_timer: Timer = %LifetimeTimer
 
 
-func _enter_tree() -> void:
+func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	
@@ -73,28 +87,26 @@ func _enter_tree() -> void:
 	_dialogue_parser.dialogue_signal.connect(_on_dialogue_signal)
 	_dialogue_parser.variable_changed.connect(_on_variable_changed)
 	_dialogue_parser.dialogue_ended.connect(_on_dialogue_ended)
-
-
-func _ready() -> void:
-	if Engine.is_editor_hint():
-		return
 	
 	for effect in dialogue_label.custom_effects. \
 			filter(func(item): return item is RichTextWait):
 		_wait_effect = effect
 		_wait_effect.wait_finished.connect(_on_wait_effect_wait_finished)
 		break
+	if not _wait_effect:
+		printerr("RichTextWait effect is missing!")
 	
 	hide()
 
 
 func _process(delta: float) -> void:
-	if not is_running():
-		return
-	
 	# Enable dynamic vertical size with RichTextLabel
 	panel.size = dialogue_label.size
 	panel.size.y = dialogue_label.size.y + options.size.y
+	size = panel.size
+	
+	if not is_running():
+		return
 	
 	# Scrolling for longer dialogues
 	var scroll_amt := Input.get_axis(&"ui_up", &"ui_down")
@@ -104,10 +116,12 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed(skip_input_action) and is_running():
-		if _wait_effect and not _wait_effect.skip:
+		if not _wait_effect.skip:
+			# Skip dialogue, i.e. show it fully
 			_wait_effect.skip = true
-			await get_tree().process_frame
-			_on_wait_effect_wait_finished()
+		else:
+			# Advance dialogue
+			select_option(0)
 
 
 ## Starts processing the dialogue [member data], starting with the Start Node
@@ -151,21 +165,18 @@ func _on_dialogue_started(id: String) -> void:
 func _on_dialogue_processed(
 	speaker: Variant, dialogue: String, options: Array[String]
 ) -> void:
-	# set speaker
+	# Set speaker
 	if speaker is Character:
 		speaker_label.text = speaker.name
 	elif speaker is String:
 		speaker_label.text = speaker
 	else:
-		print("Invalid speaker type!")
+		printerr("Invalid speaker type!")
 	
-	# set dialogue
+	# Set dialogue
 	dialogue_label.text = _dialogue_parser._update_wait_tags(dialogue_label, dialogue)
 	dialogue_label.get_v_scroll_bar().set_value_no_signal(0)
-	for effect in dialogue_label.custom_effects:
-		if effect is RichTextWait:
-			effect.skip = false
-			break
+	_wait_effect.skip = false
 	
 	dialogue_processed.emit(speaker, dialogue, options)
 
@@ -190,4 +201,8 @@ func _on_dialogue_ended() -> void:
 
 ## Triggered each time a dialogue text is fully shown.
 func _on_wait_effect_wait_finished() -> void:
-	pass
+	# Check auto-advance
+	var lifetime := auto_advance_base_delay \
+			+ dialogue_label.text.length() * auto_advance_character_delay
+	_lifetime_timer.timeout.connect(func(): select_option(0), CONNECT_ONE_SHOT)
+	_lifetime_timer.start(lifetime)

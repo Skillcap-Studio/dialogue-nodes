@@ -28,7 +28,7 @@ nodes = {
 "text": "Nah"
 }
 },
-"size": Vector2(300, 254),
+"size": Vector2(300, 289),
 "speaker": "Greg"
 },
 "1_2": {
@@ -41,11 +41,11 @@ nodes = {
 "text": "..."
 }
 },
-"size": Vector2(300, 240),
+"size": Vector2(300, 256),
 "speaker": "Greg"
 },
 "1_3": {
-"dialogue": "You can write special keywords between [lb] & ] for different effects.",
+"dialogue": "You can write special keywords between [lb]&] for different effects.",
 "offset": Vector2(560, 0),
 "options": {
 0: {
@@ -86,7 +86,7 @@ Usage: [lb]effect1] [lb]effect2] text goes here [lb]/effect2] [lb]s/effect1]",
 "text": "Got it!"
 }
 },
-"size": Vector2(300, 254),
+"size": Vector2(300, 289),
 "speaker": "Greg"
 }
 }
