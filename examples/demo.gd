@@ -1,8 +1,11 @@
 extends Control
 
+
 @export var demos: Array[DialogueData]
 
-@onready var dialogue_box = $DialogueBox
+@onready var dialogue_box_old: DialogueBox = $DialogueBoxOld
+@onready var dialogue_box_new: ScDialogueBubble = $DialogueBoxNew
+@onready var dialogue_box = dialogue_box_new
 @onready var particles = $Particles
 
 

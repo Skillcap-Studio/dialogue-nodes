@@ -41,11 +41,11 @@ nodes = {
 "text": "..."
 }
 },
-"size": Vector2(300, 240),
+"size": Vector2(300, 256),
 "speaker": "Greg"
 },
 "1_3": {
-"dialogue": "You can write special keywords between [lb] & ] for different effects.",
+"dialogue": "You can write special keywords between [lb]&] for different effects.",
 "offset": Vector2(560, 0),
 "options": {
 0: {
