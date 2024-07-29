@@ -137,12 +137,11 @@ anchor_bottom = 1.0
 offset_left = -147.0
 offset_top = -175.0
 offset_right = 153.0
-offset_bottom = -121.0
+offset_bottom = -152.0
 grow_horizontal = 2
 grow_vertical = 0
 auto_advance_enabled = true
 skip_input_action = &"ui_cancel"
-max_chars_per_line = 25
 
 [connection signal="item_selected" from="DemoSelector" to="." method="_on_demo_selected"]
 [connection signal="pressed" from="StartButton" to="." method="_on_Button_pressed"]

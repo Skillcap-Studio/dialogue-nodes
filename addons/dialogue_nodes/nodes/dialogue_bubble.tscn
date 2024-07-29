@@ -19,7 +19,7 @@ script = ExtResource("4_ua0e7")
 layout_mode = 3
 anchors_preset = 0
 offset_right = 300.0
-offset_bottom = 46.0
+offset_bottom = 14.0
 script = ExtResource("1_xuoxo")
 
 [node name="Panel" type="Panel" parent="."]
@@ -27,7 +27,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 0
 offset_right = 300.0
-offset_bottom = 46.0
+offset_bottom = 14.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 1
@@ -47,6 +47,11 @@ layout_mode = 2
 [node name="DialogueLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 10
+theme_override_font_sizes/italics_font_size = 10
+theme_override_font_sizes/mono_font_size = 10
+theme_override_font_sizes/normal_font_size = 10
+theme_override_font_sizes/bold_font_size = 10
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, foo bar baz
 "
@@ -74,6 +79,7 @@ offset_top = -11.5
 offset_right = 63.0
 offset_bottom = 11.5
 grow_vertical = 2
+theme_override_font_sizes/font_size = 24
 text = "Speaker"
 
 [node name="DialogueParser" type="Node" parent="."]
