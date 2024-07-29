@@ -44,21 +44,31 @@ signal dialogue_ended
 
 @export_group("Auto Advance", "auto_advance_")
 ## If [code]true[/code], the dialogue will advance automatically unless there are options.
-@export var auto_advance_enabled := false
-## Base delay.[br]Has no effect if [param auto_advance_enabled] is [code]false[/code].
+@export var auto_advance_enabled := false:
+	set(value):
+		auto_advance_enabled = value
+		notify_property_list_changed()
+## Base delay. It will be applied regardless of the text size.
 @export var auto_advance_base_delay := 0.15
-## Additional delay per character.[br]Has no effect if [param auto_advance_enabled] is
-## [code]false[/code].
+## Additional delay per character.
 @export var auto_advance_character_delay := 0.04
 
 @export_group("Dialogue")
+# TODO: check if we're gonna need this (ATM there's no scrolling enabled)
 ## Speed of scroll when using joystick/keyboard input.
 @export var scroll_speed := 4
 ## Input action used to skip dialogue animation.
 @export var skip_input_action := &"ui_select"
 
+@export_group("Font Sizes", "font_size_")
+@export var font_size_speaker := 24:
+	set = _set_font_size_speaker
+@export var font_size_dialogue_text := 10:
+	set = _set_font_size_dialogue_text
+
 @export_group("Visuals")
 ## The maximum number of characters allowed in a single line.
+## This will determine the width of the dialogue bubble.
 @export var max_chars_per_line := 25
 
 @export_group("Misc")
@@ -128,6 +138,20 @@ func _unhandled_input(event: InputEvent) -> void:
 			select_option(0)
 
 
+func _validate_property(property: Dictionary) -> void:
+	match property.name:
+		"auto_advance_base_delay":
+			if auto_advance_enabled:
+				property.usage = PROPERTY_USAGE_DEFAULT
+			else:
+				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
+		"auto_advance_character_delay":
+			if auto_advance_enabled:
+				property.usage = PROPERTY_USAGE_DEFAULT
+			else:
+				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
+
+
 #region Public Methods
 ## Starts processing the dialogue [member data], starting with the Start Node
 ## with its ID set to [param start_id].
@@ -178,6 +202,7 @@ func set_auto_advance_character_delay(character_delay: float) -> ScDialogueBubbl
 #endregion
 
 
+#region Private methods
 func _calculate_bubble_width(dialogue_length: int) -> int:
 	# Calculate average char width using a common character
 	var avg_char_width := dialogue_label.get_theme_font(&"normal_font") \
@@ -243,3 +268,36 @@ func _on_wait_effect_wait_finished() -> void:
 		_lifetime_timer.timeout.connect(func(): select_option(0),
 				CONNECT_ONE_SHOT)
 		_lifetime_timer.start(lifetime)
+#endregion
+
+
+#region Setters
+## Updates the font size for the speaker label.
+func _set_font_size_speaker(value: int) -> void:
+	font_size_speaker = value
+	if not is_node_ready():
+		return
+	
+	if speaker_label.label_settings:
+		speaker_label.label_settings.font_size = font_size_speaker
+	else:
+		speaker_label.add_theme_font_size_override(&"font_size", font_size_speaker)
+
+
+## Updates the font size for the dialogue text.
+func _set_font_size_dialogue_text(value: int) -> void:
+	font_size_dialogue_text = value
+	if not is_node_ready():
+		return
+	
+	dialogue_label.add_theme_font_size_override(&"bold_italics_font_size",
+			font_size_dialogue_text)
+	dialogue_label.add_theme_font_size_override(&"italics_font_size",
+			font_size_dialogue_text)
+	dialogue_label.add_theme_font_size_override(&"mono_font_size",
+			font_size_dialogue_text)
+	dialogue_label.add_theme_font_size_override(&"normal_font_size",
+			font_size_dialogue_text)
+	dialogue_label.add_theme_font_size_override(&"bold_font_size",
+			font_size_dialogue_text)
+#endregion
