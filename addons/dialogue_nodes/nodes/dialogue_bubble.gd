@@ -57,6 +57,10 @@ signal dialogue_ended
 ## Input action used to skip dialogue animation.
 @export var skip_input_action := &"ui_select"
 
+@export_group("Visuals")
+## The maximum number of characters allowed in a single line.
+@export var max_chars_per_line := 25
+
 @export_group("Misc")
 ## Hide dialogue box at the end of a dialogue.
 @export var hide_on_dialogue_end := true
@@ -124,6 +128,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			select_option(0)
 
 
+#region Public Methods
 ## Starts processing the dialogue [member data], starting with the Start Node
 ## with its ID set to [param start_id].
 func start(id: StringName = start_id) -> void:
@@ -153,6 +158,33 @@ func select_option(idx: int) -> void:
 ## Returns [code]true[/code] if the [ScDialogueBubble] is processing a dialogue tree.
 func is_running() -> bool:
 	return _dialogue_parser.is_running()
+#endregion
+
+
+#region Fluent Interfaces
+func set_auto_advance_enabled(enabled: bool) -> ScDialogueBubble:
+	auto_advance_enabled = enabled
+	return self
+
+
+func set_auto_advance_base_delay(base_delay: float) -> ScDialogueBubble:
+	auto_advance_base_delay = base_delay
+	return self
+
+
+func set_auto_advance_character_delay(character_delay: float) -> ScDialogueBubble:
+	auto_advance_character_delay = character_delay
+	return self
+#endregion
+
+
+func _calculate_bubble_width(dialogue_length: int) -> int:
+	# Calculate average char width using a common character
+	var avg_char_width := dialogue_label.get_theme_font(&"normal_font") \
+			.get_string_size("A").x
+	
+	var chars_per_line := mini(dialogue_length, max_chars_per_line)
+	return roundi(avg_char_width * chars_per_line)
 
 
 func _on_dialogue_started(id: String) -> void:
@@ -172,6 +204,9 @@ func _on_dialogue_processed(
 		speaker_label.text = speaker
 	else:
 		printerr("Invalid speaker type!")
+	
+	# Set width dynamically
+	panel.custom_minimum_size.x = _calculate_bubble_width(dialogue.length())
 	
 	# Set dialogue
 	dialogue_label.text = _dialogue_parser._update_wait_tags(dialogue_label, dialogue)
@@ -202,7 +237,9 @@ func _on_dialogue_ended() -> void:
 ## Triggered each time a dialogue text is fully shown.
 func _on_wait_effect_wait_finished() -> void:
 	# Check auto-advance
-	var lifetime := auto_advance_base_delay \
-			+ dialogue_label.text.length() * auto_advance_character_delay
-	_lifetime_timer.timeout.connect(func(): select_option(0), CONNECT_ONE_SHOT)
-	_lifetime_timer.start(lifetime)
+	if auto_advance_enabled:
+		var lifetime := auto_advance_base_delay \
+				+ dialogue_label.text.length() * auto_advance_character_delay
+		_lifetime_timer.timeout.connect(func(): select_option(0),
+				CONNECT_ONE_SHOT)
+		_lifetime_timer.start(lifetime)
