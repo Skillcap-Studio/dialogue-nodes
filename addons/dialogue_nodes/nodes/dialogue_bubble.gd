@@ -53,12 +53,11 @@ signal dialogue_ended
 ## Additional delay per character.
 @export var auto_advance_character_delay := 0.04
 
-@export_group("Dialogue")
-# TODO: check if we're gonna need this (ATM there's no scrolling enabled)
-## Speed of scroll when using joystick/keyboard input.
-@export var scroll_speed := 4
+@export_group("Input Handling")
 ## Input action used to skip dialogue animation.
 @export var skip_input_action := &"ui_select"
+## Determines whether the dialogue box will intercept all inputs or not.
+@export var input_blocking := false
 
 @export_group("Font Sizes", "font_size_")
 @export var font_size_speaker := 24:
@@ -74,6 +73,9 @@ signal dialogue_ended
 @export_group("Misc")
 ## Hide dialogue box at the end of a dialogue.
 @export var hide_on_dialogue_end := true
+# TODO: check if we're gonna need this (ATM there's no scrolling enabled)
+## Speed of scroll when using joystick/keyboard input.
+@export var scroll_speed := 4
 
 ## Contains the variable data from the [param DialogueData] parsed in an easy
 ## to access dictionary.[br]
@@ -198,6 +200,11 @@ func set_auto_advance_base_delay(base_delay: float) -> ScDialogueBubble:
 
 func set_auto_advance_character_delay(character_delay: float) -> ScDialogueBubble:
 	auto_advance_character_delay = character_delay
+	return self
+
+
+func set_input_blocking(blocking: bool) -> ScDialogueBubble:
+	input_blocking = blocking
 	return self
 #endregion
 
