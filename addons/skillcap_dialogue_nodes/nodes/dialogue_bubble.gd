@@ -1,10 +1,6 @@
 @tool
 class_name ScDialogueBubble
 extends Control
-# TODO: check if we need multiple options
-# TODO: add support for animated icon when user interaction is needed to advance
-# TODO: input blocking
-# TODO: support for tail, with multiple, configurable setups
 
 
 ## Triggered when a dialogue has started.
@@ -22,7 +18,7 @@ signal option_selected(idx: int)
 ## the dialogue tree.
 signal dialogue_signal(value: String)
 ## Triggered when a variable value is changed.
-## Passes the [param variable_name] along with it"s [param value]
+## Passes the [param variable_name] along with its [param value].
 signal variable_changed(variable_name: String, value)
 ## Triggered when a dialogue tree has ended processing and reached the end of
 ## the dialogue.
@@ -64,11 +60,18 @@ signal dialogue_ended
 	set = _set_font_size_speaker
 @export var font_size_dialogue_text := 10:
 	set = _set_font_size_dialogue_text
+@export var font_size_option_buttons := 10:
+	set = _set_font_size_option_buttons
 
 @export_group("Visuals")
 ## The maximum number of characters allowed in a single line.
 ## This will determine the width of the dialogue bubble.
 @export var max_chars_per_line := 25
+## The maximum number of options to show in the dialogue box.
+@export_range(1, 4) var max_options_count := 2:
+	set = _set_max_options_count
+## Icon displayed when no text options are available.
+@export var next_icon := preload("res://addons/skillcap_dialogue_nodes/icons/Play.svg")
 
 @export_group("Misc")
 ## Hide dialogue box at the end of a dialogue.
@@ -83,19 +86,38 @@ signal dialogue_ended
 var variables: Dictionary
 ## Contains all the [param Character] resources loaded from the path in the [member data].
 var characters: Array[Character]
+## The node representing the speaking entity. It will be used to determine the
+## dialogue box's position in the game world.
+var speaker_node: Node2D
 var _wait_effect: RichTextWait
+var _option_buttons: Array[Button] = []
+## Processed on each dialogue. If [code]true[/code], the current dialogue has options.
+var _has_options := false
 
-@onready var panel: Panel = %Panel
+@onready var panel: PanelContainer = %Panel
 @onready var dialogue_label: RichTextLabel = %DialogueLabel
-@onready var options: BoxContainer = %Options
+@onready var options_container: BoxContainer = %Options
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var _dialogue_parser: DialogueParser = %DialogueParser
 @onready var _lifetime_timer: Timer = %LifetimeTimer
 
 
+#region Built-in Virtual Methods
 func _ready() -> void:
+	# Set the root node's size based on the panel container's
+	panel.resized.connect(func(): size = panel.size)
+	
+	for i: int in range(options_container.get_child_count()):
+		var option: Button = options_container.get_child(i)
+		_option_buttons.append(option)
+	
 	if Engine.is_editor_hint():
 		return
+	
+	_set_max_options_count(max_options_count)
+	_set_font_size_speaker(font_size_speaker)
+	_set_font_size_dialogue_text(font_size_dialogue_text)
+	_set_font_size_option_buttons(font_size_option_buttons)
 	
 	_dialogue_parser.dialogue_started.connect(_on_dialogue_started)
 	_dialogue_parser.dialogue_processed.connect(_on_dialogue_processed)
@@ -103,6 +125,11 @@ func _ready() -> void:
 	_dialogue_parser.dialogue_signal.connect(_on_dialogue_signal)
 	_dialogue_parser.variable_changed.connect(_on_variable_changed)
 	_dialogue_parser.dialogue_ended.connect(_on_dialogue_ended)
+	
+	# Initialize option buttons
+	for i: int in range(_option_buttons.size()):
+		var option: Button = _option_buttons[i]
+		option.pressed.connect(select_option.bind(i))
 	
 	for effect in dialogue_label.custom_effects. \
 			filter(func(item): return item is RichTextWait):
@@ -112,17 +139,17 @@ func _ready() -> void:
 	if not _wait_effect:
 		printerr("RichTextWait effect is missing!")
 	
+	options_container.hide()
 	hide()
 
 
+# TODO: should this be handled in the physics process?
 func _process(delta: float) -> void:
-	# Enable dynamic vertical size with RichTextLabel
-	panel.size = dialogue_label.size
-	panel.size.y = dialogue_label.size.y + options.size.y
-	size = panel.size
-	
 	if not is_running():
 		return
+	
+	# Update position
+	position = _get_target_position()
 	
 	# Scrolling for longer dialogues
 	var scroll_amt := Input.get_axis(&"ui_up", &"ui_down")
@@ -152,6 +179,7 @@ func _validate_property(property: Dictionary) -> void:
 				property.usage = PROPERTY_USAGE_DEFAULT
 			else:
 				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
+#endregion
 
 
 #region Public Methods
@@ -219,6 +247,13 @@ func _calculate_bubble_width(dialogue_length: int) -> int:
 	return roundi(avg_char_width * chars_per_line)
 
 
+# TODO: account for tail and offset
+## Returns the bubble's position based on [member speaker_node].
+func _get_target_position() -> Vector2:
+	return Vector2.ZERO if not speaker_node \
+		else speaker_node.get_global_transform_with_canvas().origin
+
+
 func _on_dialogue_started(id: String) -> void:
 	speaker_label.text = ""
 	dialogue_label.text = ""
@@ -245,6 +280,30 @@ func _on_dialogue_processed(
 	dialogue_label.get_v_scroll_bar().set_value_no_signal(0)
 	_wait_effect.skip = false
 	
+	# Set options
+	for i: int in range(_option_buttons.size()):
+		var option: Button = _option_buttons[i]
+		option.icon = null
+		if i >= options.size():
+			option.hide()
+		else:
+			option.text = options[i].replace("[br]", "\n")
+			option.show()
+	_has_options = options.size() > 1
+	
+	# Auto-advance only if there are no options, otherwise show button/label
+	if options.size() == 1 and options[0].is_empty():
+		if auto_advance_enabled:
+			var lifetime := auto_advance_base_delay \
+					+ dialogue_label.text.length() * auto_advance_character_delay
+			_lifetime_timer.timeout.connect(func(): select_option(0),
+					CONNECT_ONE_SHOT)
+			_lifetime_timer.start(lifetime)
+		else:
+			var advance_btn: Button = _option_buttons[0]
+			advance_btn.icon = next_icon
+	
+	options_container.hide()
 	dialogue_processed.emit(speaker, dialogue, options)
 
 
@@ -268,17 +327,26 @@ func _on_dialogue_ended() -> void:
 
 ## Triggered each time a dialogue text is fully shown.
 func _on_wait_effect_wait_finished() -> void:
-	# Check auto-advance
-	if auto_advance_enabled:
-		var lifetime := auto_advance_base_delay \
-				+ dialogue_label.text.length() * auto_advance_character_delay
-		_lifetime_timer.timeout.connect(func(): select_option(0),
-				CONNECT_ONE_SHOT)
-		_lifetime_timer.start(lifetime)
+	# Check if one or more buttons should be displayed
+	if not auto_advance_enabled or _has_options:
+		options_container.show()
+		_option_buttons[0].grab_focus()
 #endregion
 
 
 #region Setters
+func _set_max_options_count(value: int) -> void:
+	max_options_count = value
+	if not is_node_ready():
+		return
+	
+	for option in _option_buttons:
+		option.hide()
+	
+	for i: int in range(max_options_count):
+		_option_buttons[i].show()
+
+
 ## Updates the font size for the speaker label.
 func _set_font_size_speaker(value: int) -> void:
 	font_size_speaker = value
@@ -307,4 +375,14 @@ func _set_font_size_dialogue_text(value: int) -> void:
 			font_size_dialogue_text)
 	dialogue_label.add_theme_font_size_override(&"bold_font_size",
 			font_size_dialogue_text)
+
+
+## Updates the font size in all option buttons.
+func _set_font_size_option_buttons(value: int) -> void:
+	font_size_option_buttons = value
+	if not is_node_ready():
+		return
+	
+	for button in _option_buttons:
+		button.add_theme_font_size_override(&"font_size", font_size_option_buttons)
 #endregion

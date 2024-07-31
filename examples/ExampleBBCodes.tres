@@ -45,7 +45,7 @@ nodes = {
 "speaker": "Greg"
 },
 "1_3": {
-"dialogue": "You can write special keywords between [lb]&] for different effects.",
+"dialogue": "You can write special keywords between ... for different effects.",
 "offset": Vector2(560, 0),
 "options": {
 0: {
@@ -71,8 +71,7 @@ nodes = {
 "speaker": "Greg"
 },
 "1_5": {
-"dialogue": "You can even combine two or more effects to create [rainbow][wave]EVEN MORE AWESOME EFFECTS![/wave][/rainbow][br]
-Usage: [lb]effect1] [lb]effect2] text goes here [lb]/effect2] [lb]s/effect1]",
+"dialogue": "You can even combine two or more effects to create [rainbow][wave]EVEN MORE AWESOME EFFECTS![/wave][/rainbow][br]",
 "offset": Vector2(1240, 0),
 "options": {
 0: {

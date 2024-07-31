@@ -18,24 +18,19 @@ script = ExtResource("4_ua0e7")
 [node name="DialogueBubble" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 300.0
-offset_bottom = 14.0
+offset_right = 250.0
+offset_bottom = 70.0
 script = ExtResource("1_xuoxo")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 0
-offset_right = 300.0
-offset_bottom = 14.0
+offset_right = 250.0
+offset_bottom = 70.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
@@ -53,20 +48,40 @@ theme_override_font_sizes/mono_font_size = 10
 theme_override_font_sizes/normal_font_size = 10
 theme_override_font_sizes/bold_font_size = 10
 bbcode_enabled = true
-text = "Lorem ipsum dolor sit amet, foo bar baz
-"
+text = "Lorem ipsum dolor sit amet, foo bar"
 fit_content = true
 custom_effects = [SubResource("RichTextEffect_kq87j"), SubResource("RichTextEffect_vm7ia"), SubResource("RichTextEffect_ieyfc")]
 
-[node name="Options" type="BoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Options" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 8
-alignment = 2
+size_flags_vertical = 10
+
+[node name="Option1" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Option 1"
+
+[node name="Option2" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Option 2"
+
+[node name="Option3" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Option 3"
+
+[node name="Option4" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Option 4"
 
 [node name="SpeakerPivot" type="Control" parent="Panel"]
-anchors_preset = 0
+layout_mode = 2
 
 [node name="SpeakerLabel" type="Label" parent="Panel/SpeakerPivot"]
 unique_name_in_owner = true
