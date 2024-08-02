@@ -18,14 +18,11 @@ script = ExtResource("4_ua0e7")
 [node name="DialogueBubble" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 250.0
-offset_bottom = 70.0
 script = ExtResource("1_xuoxo")
 
 [node name="Panel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
-layout_mode = 0
 offset_right = 250.0
 offset_bottom = 70.0
 
@@ -87,13 +84,9 @@ layout_mode = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -11.5
-offset_right = 63.0
-offset_bottom = 11.5
-grow_vertical = 2
+offset_top = -19.0
+offset_right = 94.0
+offset_bottom = 15.0
 theme_override_font_sizes/font_size = 24
 text = "Speaker"
 

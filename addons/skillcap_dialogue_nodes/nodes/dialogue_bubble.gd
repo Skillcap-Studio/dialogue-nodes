@@ -70,6 +70,8 @@ signal dialogue_ended
 ## The maximum number of options to show in the dialogue box.
 @export_range(1, 4) var max_options_count := 2:
 	set = _set_max_options_count
+@export_range(0.0, 1.0, 0.01) var opacity := 0.7:
+	set = _set_opacity
 ## Icon displayed when no text options are available.
 @export var next_icon := preload("res://addons/skillcap_dialogue_nodes/icons/Play.svg")
 
@@ -104,9 +106,6 @@ var _has_options := false
 
 #region Built-in Virtual Methods
 func _ready() -> void:
-	# Set the root node's size based on the panel container's
-	panel.resized.connect(func(): size = panel.size)
-	
 	for i: int in range(options_container.get_child_count()):
 		var option: Button = options_container.get_child(i)
 		_option_buttons.append(option)
@@ -212,6 +211,10 @@ func select_option(idx: int) -> void:
 ## Returns [code]true[/code] if the [ScDialogueBubble] is processing a dialogue tree.
 func is_running() -> bool:
 	return _dialogue_parser.is_running()
+
+
+func get_panel_size() -> Vector2:
+	return panel.size
 #endregion
 
 
@@ -345,6 +348,10 @@ func _set_max_options_count(value: int) -> void:
 	
 	for i: int in range(max_options_count):
 		_option_buttons[i].show()
+
+
+func _set_opacity(value: float) -> void:
+	opacity = value
 
 
 ## Updates the font size for the speaker label.
