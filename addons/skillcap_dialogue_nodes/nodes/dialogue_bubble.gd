@@ -28,12 +28,7 @@ signal dialogue_ended
 @export_group("Data")
 ## Contains the [param DialogueData] resource created using the Dialogue Nodes editor.
 @export var data: DialogueData:
-	set(value):
-		data = value
-		if is_node_ready():
-			_dialogue_parser.data = value
-			variables = _dialogue_parser.variables
-			characters = _dialogue_parser.characters
+	set = _set_data
 ## The default start ID to begin dialogue from.
 ## This is the value you set in the Dialogue Nodes editor.
 @export var start_id := &"START"
@@ -113,6 +108,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	
+	_set_data(data)
 	_set_max_options_count(max_options_count)
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
@@ -219,6 +215,11 @@ func get_panel_size() -> Vector2:
 
 
 #region Fluent Interfaces
+func set_dialogue_data(data_: DialogueData) -> ScDialogueBubble:
+	data = data_
+	return self
+
+
 func set_auto_advance_enabled(enabled: bool) -> ScDialogueBubble:
 	auto_advance_enabled = enabled
 	return self
@@ -237,12 +238,23 @@ func set_auto_advance_character_delay(character_delay: float) -> ScDialogueBubbl
 func set_input_blocking(blocking: bool) -> ScDialogueBubble:
 	input_blocking = blocking
 	return self
+
+
+func set_max_chars_per_line(max_chars_per_line_: int) -> ScDialogueBubble:
+	max_chars_per_line = max_chars_per_line_
+	return self
+
+
+func set_opacity(opacity_: float) -> ScDialogueBubble:
+	opacity = opacity_
+	return self
 #endregion
 
 
 #region Private methods
+## Returns the bubble width by calculating the average character's width, 
+## using a common character.
 func _calculate_bubble_width(dialogue_length: int) -> int:
-	# Calculate average char width using a common character
 	var avg_char_width := dialogue_label.get_theme_font(&"normal_font") \
 			.get_string_size("A").x
 	
@@ -338,6 +350,16 @@ func _on_wait_effect_wait_finished() -> void:
 
 
 #region Setters
+func _set_data(value: DialogueData) -> void:
+	data = value
+	if not is_node_ready():
+		return
+	
+	_dialogue_parser.data = value
+	variables = _dialogue_parser.variables
+	characters = _dialogue_parser.characters
+
+
 func _set_max_options_count(value: int) -> void:
 	max_options_count = value
 	if not is_node_ready():

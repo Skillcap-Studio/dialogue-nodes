@@ -2,7 +2,7 @@
 ## A node for displaying branching dialogues, primarily created using the Dialogue Nodes editor.[br]
 ## NOTE: This node is not good at handling long paragraphs of text. It is recommended to use [DialogueBox] instead, or create your custom implementation using [DialogueParser].
 ## @experimental
-class_name DialogueBubble
+class_name DialogueBubbleExample
 extends RichTextLabel
 
 
@@ -45,12 +45,12 @@ signal dialogue_ended
 			follow_node = value
 		else:
 			printerr('Follow node must be of the type Node2D, Node3D or any of their sub classes.')
-## The speed at which the [DialogueBubble] moves towards the [member follow_node]'s location
+## The speed at which the [DialogueBubbleExample] moves towards the [member follow_node]'s location
 @export_range(1, 60) var smooth_follow := 10
-## The distance at which the [DialogueBubble] would be positioned from the [member follow_node].[br]
-## NOTE: The size of the [DialogueBubble] is also taken as a factor when calculating the distance.
+## The distance at which the [DialogueBubbleExample] would be positioned from the [member follow_node].[br]
+## NOTE: The size of the [DialogueBubbleExample] is also taken as a factor when calculating the distance.
 @export var bubble_offset := 72
-## The color of the tail of the [DialogueBubble].
+## The color of the tail of the [DialogueBubbleExample].
 @export var tail_color := Color('#222') :
 	set(value):
 		tail_color = value
@@ -263,7 +263,7 @@ func select_option(idx : int):
 	_dialogue_parser.select_option(idx)
 
 
-## Returns [code]true[/code] if the [DialogueBubble] is processing a dialogue tree.
+## Returns [code]true[/code] if the [DialogueBubbleExample] is processing a dialogue tree.
 func is_running():
 	return _running
 
