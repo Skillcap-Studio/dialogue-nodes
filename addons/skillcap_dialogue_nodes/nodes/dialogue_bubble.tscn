@@ -23,8 +23,9 @@ script = ExtResource("1_xuoxo")
 [node name="Panel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
+layout_mode = 0
 offset_right = 250.0
-offset_bottom = 70.0
+offset_bottom = 50.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 2

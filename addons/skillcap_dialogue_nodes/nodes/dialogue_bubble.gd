@@ -105,14 +105,19 @@ func _ready() -> void:
 		var option: Button = options_container.get_child(i)
 		_option_buttons.append(option)
 	
-	if Engine.is_editor_hint():
-		return
+	# Reset the panel's size when [member dialogue_label] or 
+	# [member options_container] resize
+	dialogue_label.resized.connect(func(): panel.size = Vector2.ZERO)
+	options_container.resized.connect(func(): panel.size = Vector2.ZERO)
 	
 	_set_data(data)
 	_set_max_options_count(max_options_count)
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
 	_set_font_size_option_buttons(font_size_option_buttons)
+	
+	if Engine.is_editor_hint():
+		return
 	
 	_dialogue_parser.dialogue_started.connect(_on_dialogue_started)
 	_dialogue_parser.dialogue_processed.connect(_on_dialogue_processed)
@@ -265,7 +270,7 @@ func _calculate_bubble_width(dialogue_length: int) -> int:
 # TODO: account for tail and offset
 ## Returns the bubble's position based on [member speaker_node].
 func _get_target_position() -> Vector2:
-	return Vector2.ZERO if not speaker_node \
+	return global_position if not speaker_node \
 		else speaker_node.get_global_transform_with_canvas().origin
 
 
