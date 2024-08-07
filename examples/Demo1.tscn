@@ -141,7 +141,11 @@ offset_bottom = -101.0
 grow_horizontal = 2
 grow_vertical = 0
 auto_advance_enabled = true
+auto_advance_base_delay = 0.1
+auto_advance_character_delay = 0.03
 skip_input_action = &"ui_cancel"
+font_size_dialogue_text = 16
+font_size_option_buttons = 14
 
 [connection signal="item_selected" from="DemoSelector" to="." method="_on_demo_selected"]
 [connection signal="pressed" from="StartButton" to="." method="_on_Button_pressed"]
