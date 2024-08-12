@@ -22,8 +22,17 @@ signal dialogue_signal(value: String)
 signal variable_changed(variable_name: String, value)
 ## Triggered when a dialogue tree has ended processing and reached the end of
 ## the dialogue.
-## The [ScDialogueBubble] may hide based on the [member hide_on_dialogue_end] property.
+## The [ScDialogueBubble] may hide of get freed based on the [member end_action]
+## property.
 signal dialogue_ended
+
+## What happens when the dialogue ends.
+enum EndAction {
+	## Free the object.
+	FREE,
+	## Hide the object.
+	HIDE,
+}
 
 @export_group("Data")
 ## Contains the [param DialogueData] resource created using the Dialogue Nodes editor.
@@ -71,8 +80,8 @@ signal dialogue_ended
 @export var next_icon := preload("res://addons/skillcap_dialogue_nodes/icons/Play.svg")
 
 @export_group("Misc")
-## Hide dialogue box at the end of a dialogue.
-@export var hide_on_dialogue_end := true
+## The behavior when the dialogue ends.
+@export var end_action := EndAction.FREE
 # TODO: check if we're gonna need this (ATM there's no scrolling enabled)
 ## Speed of scroll when using joystick/keyboard input.
 @export var scroll_speed := 4
@@ -253,6 +262,11 @@ func set_max_chars_per_line(max_chars_per_line_: int) -> ScDialogueBubble:
 func set_opacity(opacity_: float) -> ScDialogueBubble:
 	opacity = opacity_
 	return self
+
+
+func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
+	end_action = end_action_
+	return self
 #endregion
 
 
@@ -340,9 +354,13 @@ func _on_variable_changed(variable_name: String, value) -> void:
 
 
 func _on_dialogue_ended() -> void:
-	if hide_on_dialogue_end:
-		hide()
 	dialogue_ended.emit()
+	
+	match end_action:
+		EndAction.FREE:
+			queue_free()
+		EndAction.HIDE:
+			hide()
 
 
 ## Triggered each time a dialogue text is fully shown.
