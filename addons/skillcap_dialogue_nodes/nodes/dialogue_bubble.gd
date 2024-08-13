@@ -158,7 +158,7 @@ func _process(delta: float) -> void:
 		return
 	
 	# Update position
-	position = _get_target_position()
+	global_position = _get_target_position()
 	
 	# Scrolling for longer dialogues
 	var scroll_amt := Input.get_axis(&"ui_up", &"ui_down")
@@ -207,6 +207,18 @@ func stop() -> void:
 		return
 	
 	_dialogue_parser.stop()
+
+
+## Executes the ending action based on [member end_action].
+func end() -> void:
+	if is_running():
+		return
+	
+	match end_action:
+		EndAction.FREE:
+			queue_free()
+		EndAction.HIDE:
+			hide()
 
 
 ## Continues processing the dialogue tree from the node connected to
@@ -281,7 +293,6 @@ func _calculate_bubble_width(dialogue_length: int) -> int:
 	return roundi(avg_char_width * chars_per_line)
 
 
-# TODO: account for tail and offset
 ## Returns the bubble's position based on [member speaker_node].
 func _get_target_position() -> Vector2:
 	return global_position if not speaker_node \
@@ -355,12 +366,6 @@ func _on_variable_changed(variable_name: String, value) -> void:
 
 func _on_dialogue_ended() -> void:
 	dialogue_ended.emit()
-	
-	match end_action:
-		EndAction.FREE:
-			queue_free()
-		EndAction.HIDE:
-			hide()
 
 
 ## Triggered each time a dialogue text is fully shown.
