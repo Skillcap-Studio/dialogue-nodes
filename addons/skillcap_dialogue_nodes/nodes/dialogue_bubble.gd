@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/skillcap_dialogue_nodes/icons/DialogueBubble.svg")
 class_name ScDialogueBubble
 extends Control
 
@@ -79,11 +80,15 @@ enum EndAction {
 @export_range(0.0, 1.0, 0.01) var opacity := 0.7:
 	set = _set_opacity
 ## Icon displayed when no text options are available.
-@export var next_icon := preload("res://addons/skillcap_dialogue_nodes/icons/Play.svg")
+@export var next_icon: Texture2D
 
-@export_group("Misc")
+@export_group("End")
+## Whether the dialogue will be ended automatically or not.
+@export var auto_end_enabled := true
 ## The behavior when the dialogue ends.
 @export var end_action := EndAction.FREE
+
+@export_group("Misc")
 # TODO: check if we're gonna need this (ATM there's no scrolling enabled)
 ## Speed of scroll when using joystick/keyboard input.
 @export var scroll_speed := 4
@@ -214,7 +219,7 @@ func stop() -> void:
 ## Executes the ending action based on [member end_action].
 func end() -> void:
 	if is_running():
-		return
+		stop()
 	
 	match end_action:
 		EndAction.FREE:
@@ -280,6 +285,11 @@ func set_minimum_width(minimum_width_: int) -> ScDialogueBubble:
 
 func set_opacity(opacity_: float) -> ScDialogueBubble:
 	opacity = opacity_
+	return self
+
+
+func set_auto_end_enabled(auto_end_enabled_: bool) -> ScDialogueBubble:
+	auto_end_enabled = auto_end_enabled_
 	return self
 
 
@@ -375,6 +385,9 @@ func _on_variable_changed(variable_name: String, value) -> void:
 
 func _on_dialogue_ended() -> void:
 	dialogue_ended.emit()
+	
+	if auto_end_enabled:
+		end()
 
 
 ## Triggered each time a dialogue text is fully shown.
