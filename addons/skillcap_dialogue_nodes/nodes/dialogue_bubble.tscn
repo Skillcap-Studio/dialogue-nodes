@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://cjbau1iog5b6u"]
+[gd_scene load_steps=10 format=3 uid="uid://cjbau1iog5b6u"]
 
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueParser.gd" id="1_cxv4l"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_bubble.gd" id="1_xuoxo"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="2_afww6"]
+[ext_resource type="Texture2D" uid="uid://bucad3kf5mxvp" path="res://addons/skillcap_dialogue_nodes/icons/Play.svg" id="2_trkj1"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="3_nq1fs"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="4_ua0e7"]
 
@@ -19,6 +20,7 @@ script = ExtResource("4_ua0e7")
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_xuoxo")
+next_icon = ExtResource("2_trkj1")
 
 [node name="Panel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
