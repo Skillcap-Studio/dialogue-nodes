@@ -71,6 +71,8 @@ enum EndAction {
 ## The maximum number of characters allowed in a single line.
 ## This will determine the width of the dialogue bubble.
 @export var max_chars_per_line := 25
+## The minimum width of the bubble, in pixels.
+@export var minimum_width := 100
 ## The maximum number of options to show in the dialogue box.
 @export_range(1, 4) var max_options_count := 2:
 	set = _set_max_options_count
@@ -271,6 +273,11 @@ func set_max_chars_per_line(max_chars_per_line_: int) -> ScDialogueBubble:
 	return self
 
 
+func set_minimum_width(minimum_width_: int) -> ScDialogueBubble:
+	minimum_width = minimum_width_
+	return self
+
+
 func set_opacity(opacity_: float) -> ScDialogueBubble:
 	opacity = opacity_
 	return self
@@ -284,7 +291,8 @@ func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
 
 #region Private methods
 ## Returns the bubble width by calculating the average character's width, 
-## using a common character.
+## using a common character.[br]
+## The returned value will never exceed [member max_chars_per_line].
 func _calculate_bubble_width(dialogue_length: int) -> int:
 	var avg_char_width := dialogue_label.get_theme_font(&"normal_font") \
 			.get_string_size("A").x
@@ -318,7 +326,8 @@ func _on_dialogue_processed(
 		printerr("Invalid speaker type!")
 	
 	# Set width dynamically
-	panel.custom_minimum_size.x = _calculate_bubble_width(dialogue.length())
+	var calculated_width := _calculate_bubble_width(dialogue.length())
+	panel.custom_minimum_size.x = maxi(minimum_width, calculated_width)
 	
 	# Set dialogue
 	dialogue_label.text = _dialogue_parser._update_wait_tags(dialogue_label, dialogue)
