@@ -2,5 +2,10 @@
 
 [ext_resource type="Texture2D" uid="uid://cc1ufhyvste6m" path="res://addons/skillcap_dialogue_nodes/icons/Forward.svg" id="1_4ed86"]
 
-[node name="AdvancePrompt" type="TextureRect"]
+[node name="AdvancePrompt" type="CenterContainer"]
+offset_right = 8.0
+offset_bottom = 16.0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
 texture = ExtResource("1_4ed86")
