@@ -33,6 +33,7 @@ func _on_dialogue_signal(value):
 
 func _on_demo_selected(index):
 	dialogue_box.data = demos[index]
+	$StartButton.release_focus()
 
 
 func _on_locale_selected(index):

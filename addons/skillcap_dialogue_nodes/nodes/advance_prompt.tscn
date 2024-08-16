@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b0dpdsr7ctm1p"]
+
+[ext_resource type="Texture2D" uid="uid://cc1ufhyvste6m" path="res://addons/skillcap_dialogue_nodes/icons/Forward.svg" id="1_4ed86"]
+
+[node name="AdvancePrompt" type="TextureRect"]
+texture = ExtResource("1_4ed86")
