@@ -46,9 +46,7 @@ enum EndAction {
 @export_group("Auto Advance", "auto_advance_")
 ## If [code]true[/code], the dialogue will advance automatically unless there are options.
 @export var auto_advance_enabled := false:
-	set(value):
-		auto_advance_enabled = value
-		notify_property_list_changed()
+	set = _set_auto_advance_enabled
 ## Base delay. It will be applied regardless of the text size.
 @export var auto_advance_base_delay := 0.15
 ## Additional delay per character.
@@ -79,8 +77,12 @@ enum EndAction {
 	set = _set_max_options_count
 @export_range(0.0, 1.0, 0.01) var opacity := 0.7:
 	set = _set_opacity
-## Icon displayed when no text options are available.
-@export var next_icon: Texture2D
+## Scene displayed when no dialogue options are available.
+## Its root node [b]must[/b] be of type [code]Control[/code].
+@export var advance_prompt_scene := preload(
+	"res://addons/skillcap_dialogue_nodes/nodes/advance_prompt.tscn"
+):
+	set = _editor_set_advance_prompt_scene
 
 @export_group("End")
 ## Whether the dialogue will be ended automatically or not.
@@ -110,6 +112,7 @@ var _has_options := false
 @onready var panel: PanelContainer = %Panel
 @onready var dialogue_label: RichTextLabel = %DialogueLabel
 @onready var options_container: BoxContainer = %Options
+@onready var advance_prompt_container: HBoxContainer = %AdvancePromptContainer
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var _dialogue_parser: DialogueParser = %DialogueParser
 @onready var _lifetime_timer: Timer = %LifetimeTimer
@@ -127,10 +130,12 @@ func _ready() -> void:
 	options_container.resized.connect(func(): panel.size = Vector2.ZERO)
 	
 	_set_data(data)
+	_set_auto_advance_enabled(auto_advance_enabled)
 	_set_max_options_count(max_options_count)
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
 	_set_font_size_option_buttons(font_size_option_buttons)
+	_editor_set_advance_prompt_scene(advance_prompt_scene)
 	
 	if Engine.is_editor_hint():
 		return
@@ -155,7 +160,8 @@ func _ready() -> void:
 	if not _wait_effect:
 		printerr("RichTextWait effect is missing!")
 	
-	options_container.hide()
+	_set_advance_prompt_enabled(false)
+	_set_options_enabled(false)
 	hide()
 
 
@@ -174,9 +180,8 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed(skip_input_action) and is_running() \
-			and not auto_advance_enabled:
-		if not _wait_effect.skip:
+	if Input.is_action_just_pressed(skip_input_action) and not auto_advance_enabled:
+		if not _wait_effect.finished and not _wait_effect.skip:
 			# Skip dialogue, i.e. show it fully
 			_wait_effect.skip = true
 		else:
@@ -303,6 +308,9 @@ func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
 #region Private methods
 ## Advances dialogue. Used when there are no dialogue options in the current dialogue.
 func _advance_dialogue() -> void:
+	if _has_options:
+		return
+	
 	select_option(0)
 
 
@@ -321,6 +329,16 @@ func _calculate_bubble_width(dialogue_length: int) -> int:
 func _get_target_position() -> Vector2:
 	return global_position if not speaker_node \
 		else speaker_node.get_global_transform_with_canvas().origin
+
+
+## Enables options by setting their container's opacity.
+func _set_options_enabled(enabled: bool) -> void:
+	options_container.modulate.a = 1.0 if enabled else 0.0
+
+
+## Enables the advance prompt scene by setting its container's opacity.
+func _set_advance_prompt_enabled(enabled: bool) -> void:
+	advance_prompt_container.modulate.a = 1.0 if enabled else 0.0
 
 
 func _on_dialogue_started(id: String) -> void:
@@ -359,20 +377,29 @@ func _on_dialogue_processed(
 		else:
 			option.text = options[i].replace("[br]", "\n")
 			option.show()
-	_has_options = options.size() > 1
+	_has_options = options.size() > 1 and not options[0].is_empty()
 	
-	# Auto-advance only if there are no options, otherwise show button/label
-	if options.size() == 1 and options[0].is_empty():
-		if auto_advance_enabled:
-			var lifetime := auto_advance_base_delay \
-					+ dialogue_label.text.length() * auto_advance_character_delay
-			_lifetime_timer.timeout.connect(_advance_dialogue, CONNECT_ONE_SHOT)
-			_lifetime_timer.start(lifetime)
-		else:
-			var advance_btn: Button = _option_buttons[0]
-			advance_btn.icon = next_icon
+	# Toggle the visibility of the advance prompt and the options,
+	# necessary for proper spacing
+	if _has_options:
+		options_container.show()
+		advance_prompt_container.hide()
+	else:
+		options_container.hide()
+		if not auto_advance_enabled:
+			advance_prompt_container.show()
 	
-	options_container.hide()
+	# Auto-advance only if there are no options
+	if not _has_options and auto_advance_enabled:
+		var lifetime := auto_advance_base_delay \
+				+ dialogue_label.text.length() * auto_advance_character_delay
+		_lifetime_timer.timeout.connect(_advance_dialogue, CONNECT_ONE_SHOT)
+		_lifetime_timer.start(lifetime)
+	
+	# Hide options and prompt by making them transparent
+	_set_advance_prompt_enabled(false)
+	_set_options_enabled(false)
+	
 	dialogue_processed.emit(speaker, dialogue, options)
 
 
@@ -398,9 +425,13 @@ func _on_dialogue_ended() -> void:
 ## Triggered each time a dialogue text is fully shown.
 func _on_wait_effect_wait_finished() -> void:
 	# Check if one or more buttons should be displayed
-	if not auto_advance_enabled or _has_options:
-		options_container.show()
+	if _has_options:
+		# Display option buttons
+		_set_options_enabled(true)
 		_option_buttons[0].grab_focus()
+	elif not auto_advance_enabled:
+		# Display advance prompt node
+		_set_advance_prompt_enabled(true)
 #endregion
 
 
@@ -413,6 +444,15 @@ func _set_data(value: DialogueData) -> void:
 	_dialogue_parser.data = value
 	variables = _dialogue_parser.variables
 	characters = _dialogue_parser.characters
+
+
+func _set_auto_advance_enabled(value: bool) -> void:
+	auto_advance_enabled = value
+	notify_property_list_changed()
+	if not is_node_ready():
+		return
+	
+	advance_prompt_container.visible = not auto_advance_enabled
 
 
 func _set_max_options_count(value: int) -> void:
@@ -429,6 +469,28 @@ func _set_max_options_count(value: int) -> void:
 
 func _set_opacity(value: float) -> void:
 	opacity = value
+
+
+## Sets the scene to be displayed when user interaction is needed to advance.
+## Instantiates the scene as a child of [member advance_prompt_container],
+## replacing the old one, if present.[br]
+## Editor-only.
+func _editor_set_advance_prompt_scene(value: PackedScene) -> void:
+	advance_prompt_scene = value
+	if not is_node_ready() or not Engine.is_editor_hint():
+		return
+	
+	# Remove the previous node, if it exists
+	var old_node := advance_prompt_container.get_child(0)
+	if old_node:
+		advance_prompt_container.remove_child(old_node)
+		old_node.free()
+	if advance_prompt_scene:
+		# Add the new node
+		var new_node: Control = advance_prompt_scene.instantiate()
+		new_node.name = &"AdvancePrompt"
+		advance_prompt_container.add_child(new_node)
+		new_node.owner = self
 
 
 ## Updates the font size for the speaker label.
