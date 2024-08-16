@@ -81,8 +81,7 @@ enum EndAction {
 ## Its root node [b]must[/b] be of type [code]Control[/code].
 @export var advance_prompt_scene := preload(
 	"res://addons/skillcap_dialogue_nodes/nodes/advance_prompt.tscn"
-):
-	set = _editor_set_advance_prompt_scene
+)
 
 @export_group("End")
 ## Whether the dialogue will be ended automatically or not.
@@ -135,7 +134,6 @@ func _ready() -> void:
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
 	_set_font_size_option_buttons(font_size_option_buttons)
-	_editor_set_advance_prompt_scene(advance_prompt_scene)
 	
 	if Engine.is_editor_hint():
 		return
@@ -152,6 +150,7 @@ func _ready() -> void:
 		var option: Button = _option_buttons[i]
 		option.pressed.connect(select_option.bind(i))
 	
+	# Initialize bbcode effects
 	for effect in dialogue_label.custom_effects. \
 			filter(func(item): return item is RichTextWait):
 		_wait_effect = effect
@@ -159,6 +158,12 @@ func _ready() -> void:
 		break
 	if not _wait_effect:
 		printerr("RichTextWait effect is missing!")
+	
+	# Spawn the prompt node, if set
+	if advance_prompt_scene:
+		var new_node: Control = advance_prompt_scene.instantiate()
+		new_node.name = &"AdvancePrompt"
+		advance_prompt_container.add_child(new_node)
 	
 	_set_advance_prompt_enabled(false)
 	_set_options_enabled(false)
@@ -469,28 +474,6 @@ func _set_max_options_count(value: int) -> void:
 
 func _set_opacity(value: float) -> void:
 	opacity = value
-
-
-## Sets the scene to be displayed when user interaction is needed to advance.
-## Instantiates the scene as a child of [member advance_prompt_container],
-## replacing the old one, if present.[br]
-## Editor-only.
-func _editor_set_advance_prompt_scene(value: PackedScene) -> void:
-	advance_prompt_scene = value
-	if not is_node_ready() or not Engine.is_editor_hint():
-		return
-	
-	# Remove the previous node, if it exists
-	var old_node := advance_prompt_container.get_child(0)
-	if old_node:
-		advance_prompt_container.remove_child(old_node)
-		old_node.free()
-	if advance_prompt_scene:
-		# Add the new node
-		var new_node: Control = advance_prompt_scene.instantiate()
-		new_node.name = &"AdvancePrompt"
-		advance_prompt_container.add_child(new_node)
-		new_node.owner = self
 
 
 ## Updates the font size for the speaker label.
