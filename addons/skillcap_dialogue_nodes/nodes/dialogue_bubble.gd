@@ -174,13 +174,14 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed(skip_input_action) and is_running():
+	if Input.is_action_just_pressed(skip_input_action) and is_running() \
+			and not auto_advance_enabled:
 		if not _wait_effect.skip:
 			# Skip dialogue, i.e. show it fully
 			_wait_effect.skip = true
 		else:
 			# Advance dialogue
-			select_option(0)
+			_advance_dialogue()
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -300,6 +301,11 @@ func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
 
 
 #region Private methods
+## Advances dialogue. Used when there are no dialogue options in the current dialogue.
+func _advance_dialogue() -> void:
+	select_option(0)
+
+
 ## Returns the bubble width by calculating the average character's width, 
 ## using a common character.[br]
 ## The returned value will never exceed [member max_chars_per_line].
@@ -360,8 +366,7 @@ func _on_dialogue_processed(
 		if auto_advance_enabled:
 			var lifetime := auto_advance_base_delay \
 					+ dialogue_label.text.length() * auto_advance_character_delay
-			_lifetime_timer.timeout.connect(func(): select_option(0),
-					CONNECT_ONE_SHOT)
+			_lifetime_timer.timeout.connect(_advance_dialogue, CONNECT_ONE_SHOT)
 			_lifetime_timer.start(lifetime)
 		else:
 			var advance_btn: Button = _option_buttons[0]
