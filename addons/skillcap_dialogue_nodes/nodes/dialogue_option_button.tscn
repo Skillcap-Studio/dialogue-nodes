@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://xjqv0hpmkgh2"]
+
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.gd" id="1_483ch"]
+
+[node name="DialogueOptionButton" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Option 1"
+script = ExtResource("1_483ch")

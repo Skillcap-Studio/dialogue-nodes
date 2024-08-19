@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://cjbau1iog5b6u"]
+[gd_scene load_steps=10 format=3 uid="uid://cjbau1iog5b6u"]
 
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueParser.gd" id="1_cxv4l"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_bubble.gd" id="1_xuoxo"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="2_afww6"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="3_nq1fs"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="4_ua0e7"]
+[ext_resource type="PackedScene" uid="uid://xjqv0hpmkgh2" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.tscn" id="5_umubx"]
 
 [sub_resource type="RichTextEffect" id="RichTextEffect_kq87j"]
 script = ExtResource("2_afww6")
@@ -25,7 +26,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 0
 offset_right = 250.0
-offset_bottom = 70.0
+offset_bottom = 80.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 2
@@ -50,29 +51,27 @@ text = "Lorem ipsum dolor sit amet, foo bar"
 fit_content = true
 custom_effects = [SubResource("RichTextEffect_kq87j"), SubResource("RichTextEffect_vm7ia"), SubResource("RichTextEffect_ieyfc")]
 
-[node name="Options" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Options" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 8
 size_flags_vertical = 10
 
-[node name="Option1" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+[node name="Option1" parent="Panel/MarginContainer/VBoxContainer/Options" instance=ExtResource("5_umubx")]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "Option 1"
 
-[node name="Option2" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+[node name="Option2" parent="Panel/MarginContainer/VBoxContainer/Options" instance=ExtResource("5_umubx")]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Option 2"
 
-[node name="Option3" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+[node name="Option3" parent="Panel/MarginContainer/VBoxContainer/Options" instance=ExtResource("5_umubx")]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Option 3"
 
-[node name="Option4" type="Button" parent="Panel/MarginContainer/VBoxContainer/Options"]
+[node name="Option4" parent="Panel/MarginContainer/VBoxContainer/Options" instance=ExtResource("5_umubx")]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
