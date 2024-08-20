@@ -72,9 +72,10 @@ enum EndAction {
 @export var max_chars_per_line := 25
 ## The minimum width of the bubble, in pixels.
 @export var minimum_width := 100
-## The maximum number of options to show in the dialogue box.
-@export_range(1, 4) var max_options_count := 2:
-	set = _set_max_options_count
+## The number of options to show in the dialogue bubble. 
+## This is just for editor preview purposes.
+@export_range(1, 4) var options_count := 2:
+	set = _set_options_count
 @export_range(0.0, 1.0, 0.01) var opacity := 0.7:
 	set = _set_opacity
 ## Scene displayed when no dialogue options are available.
@@ -130,7 +131,7 @@ func _ready() -> void:
 	
 	_set_data(data)
 	_set_auto_advance_enabled(auto_advance_enabled)
-	_set_max_options_count(max_options_count)
+	_set_options_count(options_count)
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
 	_set_font_size_option_buttons(font_size_option_buttons)
@@ -460,15 +461,15 @@ func _set_auto_advance_enabled(value: bool) -> void:
 	advance_prompt_container.visible = not auto_advance_enabled
 
 
-func _set_max_options_count(value: int) -> void:
-	max_options_count = value
+func _set_options_count(value: int) -> void:
+	options_count = value
 	if not is_node_ready():
 		return
 	
 	for option in _option_buttons:
 		option.hide()
 	
-	for i: int in range(max_options_count):
+	for i: int in range(options_count):
 		_option_buttons[i].show()
 
 
