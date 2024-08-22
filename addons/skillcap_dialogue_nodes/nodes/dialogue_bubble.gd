@@ -383,7 +383,7 @@ func _on_dialogue_processed(
 		else:
 			option.text = options[i].replace("[br]", "\n")
 			option.show()
-	_has_options = options.size() > 1 and not options[0].is_empty()
+	_has_options = options.size() > 0 and not options[0].is_empty()
 	
 	# Toggle the visibility of the advance prompt and the options,
 	# necessary for proper spacing
