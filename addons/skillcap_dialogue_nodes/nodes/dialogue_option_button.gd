@@ -2,6 +2,8 @@
 extends Button
 
 
+## The character to be prefixed before the option text.
+@export var prefix_character := "•"
 ## If enabled, the text will be outlined on focus.
 @export var outline_on_focus_enabled := true:
 	set(value):
@@ -9,8 +11,6 @@ extends Button
 		notify_property_list_changed()
 ## The size (in pixels) of the outline.
 @export var outline_size := 2
-
-const BULLET := "•"
 
 
 func _ready() -> void:
@@ -36,7 +36,7 @@ func _set(property: StringName, value: Variant) -> bool:
 	
 	if property == &"text":
 		var button_text := "{symbol} {text}".format({
-			"symbol": BULLET,
+			"symbol": prefix_character,
 			"text": value,
 		})
 		text = button_text

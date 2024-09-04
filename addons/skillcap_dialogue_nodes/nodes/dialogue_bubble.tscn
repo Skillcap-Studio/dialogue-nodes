@@ -1,13 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://cjbau1iog5b6u"]
+[gd_scene load_steps=11 format=3 uid="uid://cjbau1iog5b6u"]
 
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueParser.gd" id="1_cxv4l"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_bubble.gd" id="1_xuoxo"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="2_afww6"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="3_nq1fs"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="4_ua0e7"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_label.gd" id="5_6yd0c"]
 [ext_resource type="PackedScene" uid="uid://xjqv0hpmkgh2" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.tscn" id="5_umubx"]
 
-[sub_resource type="RichTextEffect" id="RichTextEffect_kq87j"]
+[sub_resource type="RichTextEffect" id="RichTextEffect_6fxej"]
 script = ExtResource("2_afww6")
 
 [sub_resource type="RichTextEffect" id="RichTextEffect_vm7ia"]
@@ -49,7 +50,8 @@ theme_override_font_sizes/bold_font_size = 10
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, foo bar"
 fit_content = true
-custom_effects = [SubResource("RichTextEffect_kq87j"), SubResource("RichTextEffect_vm7ia"), SubResource("RichTextEffect_ieyfc")]
+custom_effects = [SubResource("RichTextEffect_6fxej"), SubResource("RichTextEffect_vm7ia"), SubResource("RichTextEffect_ieyfc")]
+script = ExtResource("5_6yd0c")
 
 [node name="Options" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -99,5 +101,6 @@ text = "Speaker"
 unique_name_in_owner = true
 script = ExtResource("1_cxv4l")
 
-[node name="LifetimeTimer" type="Timer" parent="."]
+[node name="AutoAdvanceTimer" type="Timer" parent="."]
 unique_name_in_owner = true
+one_shot = true
