@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://cc1ufhyvste6m" path="res://addons/skillcap_dialogue_nodes/icons/Forward.svg" id="5_x76rf"]
 [ext_resource type="Texture2D" uid="uid://bnlg07ckbg0w" path="res://addons/skillcap_dialogue_nodes/icons/Back.svg" id="6_onucw"]
 [ext_resource type="FontFile" uid="uid://dv4rnn0ml62q3" path="res://addons/skillcap_dialogue_nodes/themes/Poppins-Bold.ttf" id="8_bfbn1"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueBox.gd" id="8_njjsn"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueBoxExample.gd" id="8_njjsn"]
 [ext_resource type="FontFile" uid="uid://bhtf12vvs2yjq" path="res://addons/skillcap_dialogue_nodes/themes/Poppins-BoldItalic.ttf" id="9_wsvtm"]
 [ext_resource type="FontFile" uid="uid://bcg26eik2m2o8" path="res://addons/skillcap_dialogue_nodes/themes/Poppins-Italic.ttf" id="10_ffgcm"]
 [ext_resource type="FontFile" uid="uid://b1bq3eoec0j1b" path="res://addons/skillcap_dialogue_nodes/themes/Poppins-Regular.ttf" id="11_4inri"]

@@ -8,22 +8,22 @@ extends Control
 ## Passes [param id] of the dialogue tree as defined in the StartNode.
 signal dialogue_started(id: String)
 ## Triggered when a single dialogue block has been processed.
-## Passes [param speaker] which can be a [String] or a [param Character] resource,
+## Passes [param speaker] which can be a [String] or a [Character] resource,
 ## a [param dialogue] containing the text to be displayed
 ## and an [param options] list containing the texts for each option.
 signal dialogue_processed(speaker: Variant, dialogue: String, options: Array[String])
-## Triggered when an option is selected
+## Triggered when an option is selected.
 signal option_selected(idx: int)
-## Triggered when a SignalNode is encountered while processing the dialogue.
+## Triggered when a [SignalNode] is encountered while processing the dialogue.
 ## Passes a [param value] of type [String] that is defined in the SignalNode in
 ## the dialogue tree.
-signal dialogue_signal(value: String)
+signal dialogue_signal_emitted(value: String)
 ## Triggered when a variable value is changed.
 ## Passes the [param variable_name] along with its [param value].
 signal variable_changed(variable_name: String, value)
 ## Triggered when a dialogue tree has ended processing and reached the end of
 ## the dialogue.
-## The [ScDialogueBubble] may hide of get freed based on the [member end_action]
+## The [ScDialogueBubble] may hide or get freed based on the [member end_action]
 ## property.
 signal dialogue_ended
 
@@ -36,7 +36,7 @@ enum EndAction {
 }
 
 @export_group("Data")
-## Contains the [param DialogueData] resource created using the Dialogue Nodes editor.
+## Contains the [DialogueData] resource created using the Dialogue Nodes editor.
 @export var data: DialogueData:
 	set = _set_data
 ## The default start ID to begin dialogue from.
@@ -55,7 +55,9 @@ enum EndAction {
 @export_group("Input Handling")
 ## Input action used to skip dialogue animation.
 @export var skip_input_action := &"ui_select"
-## Determines whether the dialogue box will intercept all inputs or not.
+## Determines whether the bubble will block [b]all inputs that are not
+## relative to the dialogue itself[/b] or not.[br]
+## Does nothing per se, as implementation is left to inherited scenes.
 @export var input_blocking := false
 
 @export_group("Font Sizes", "font_size_")
@@ -72,10 +74,6 @@ enum EndAction {
 @export var max_chars_per_line := 25
 ## The minimum width of the bubble, in pixels.
 @export var minimum_width := 100
-## The number of options to show in the dialogue bubble. 
-## This is just for editor preview purposes.
-@export_range(1, 4) var options_count := 2:
-	set = _set_options_count
 @export_range(0.0, 1.0, 0.01) var opacity := 0.7:
 	set = _set_opacity
 ## Scene displayed when no dialogue options are available.
@@ -84,44 +82,49 @@ enum EndAction {
 	"res://addons/skillcap_dialogue_nodes/nodes/advance_prompt.tscn"
 )
 
-@export_group("End")
-## Whether the dialogue will be ended automatically or not.
-@export var auto_end_enabled := true
-## The behavior when the dialogue ends.
-@export var end_action := EndAction.FREE
+@export_group("Editor Preview")
+## The number of options to show in the dialogue bubble. 
+## This is just for editor preview purposes.
+@export_range(1, 4) var options_count := 2:
+	set = _editor_set_options_count
 
 @export_group("Misc")
+## The behavior when the dialogue ends.
+@export var end_action := EndAction.FREE
 # TODO: check if we're gonna need this (ATM there's no scrolling enabled)
 ## Speed of scroll when using joystick/keyboard input.
 @export var scroll_speed := 4
 
-## Contains the variable data from the [param DialogueData] parsed in an easy
+## Contains the variable data from the [member data] parsed in an easy
 ## to access dictionary.[br]
 ## Example: [code]{ "COINS": 10, "NAME": "Obama", "ALIVE": true }[/code]
 var variables: Dictionary
-## Contains all the [param Character] resources loaded from the path in the [member data].
+## Contains all the [Character] resources loaded from the path in the [member data].
 var characters: Array[Character]
 ## The node representing the speaking entity. It will be used to determine the
 ## dialogue box's position in the game world.
 var speaker_node: Node2D
 var _wait_effect: RichTextWait
 var _option_buttons: Array[Button] = []
-## Processed on each dialogue. If [code]true[/code], the current dialogue has options.
-var _has_options := false
+## Gets set once [signal dialogue_processed] is emitted, if there are options.
+## Do not read this value directly, use [method _has_options] instead.
+var _options := []
 
 @onready var panel: PanelContainer = %Panel
-@onready var dialogue_label: RichTextLabel = %DialogueLabel
+@onready var dialogue_label: ScDialogueLabel = %DialogueLabel
 @onready var options_container: BoxContainer = %Options
 @onready var advance_prompt_container: HBoxContainer = %AdvancePromptContainer
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var _dialogue_parser: DialogueParser = %DialogueParser
-@onready var _lifetime_timer: Timer = %LifetimeTimer
+@onready var _auto_advance_timer: Timer = %AutoAdvanceTimer
 
 
 #region Built-in Virtual Methods
 func _ready() -> void:
+	# Initialize option buttons
 	for i: int in range(options_container.get_child_count()):
 		var option: Button = options_container.get_child(i)
+		option.pressed.connect(select_option.bind(i))
 		_option_buttons.append(option)
 	
 	# Reset the panel's size when [member dialogue_label] or 
@@ -131,7 +134,7 @@ func _ready() -> void:
 	
 	_set_data(data)
 	_set_auto_advance_enabled(auto_advance_enabled)
-	_set_options_count(options_count)
+	_editor_set_options_count(options_count)
 	_set_font_size_speaker(font_size_speaker)
 	_set_font_size_dialogue_text(font_size_dialogue_text)
 	_set_font_size_option_buttons(font_size_option_buttons)
@@ -142,23 +145,14 @@ func _ready() -> void:
 	_dialogue_parser.dialogue_started.connect(_on_dialogue_started)
 	_dialogue_parser.dialogue_processed.connect(_on_dialogue_processed)
 	_dialogue_parser.option_selected.connect(_on_option_selected)
-	_dialogue_parser.dialogue_signal.connect(_on_dialogue_signal)
+	_dialogue_parser.dialogue_signal.connect(_on_dialogue_signal_emitted)
 	_dialogue_parser.variable_changed.connect(_on_variable_changed)
 	_dialogue_parser.dialogue_ended.connect(_on_dialogue_ended)
+	_auto_advance_timer.timeout.connect(_advance_dialogue)
 	
-	# Initialize option buttons
-	for i: int in range(_option_buttons.size()):
-		var option: Button = _option_buttons[i]
-		option.pressed.connect(select_option.bind(i))
-	
-	# Initialize bbcode effects
-	for effect in dialogue_label.custom_effects. \
-			filter(func(item): return item is RichTextWait):
-		_wait_effect = effect
-		_wait_effect.wait_finished.connect(_on_wait_effect_wait_finished)
-		break
-	if not _wait_effect:
-		printerr("RichTextWait effect is missing!")
+	_wait_effect = dialogue_label.wait_effect
+	assert(_wait_effect, "RichTextLabel node has no RichTextWait effect")
+	_wait_effect.wait_finished.connect(_on_wait_effect_wait_finished)
 	
 	# Spawn the prompt node, if set
 	if advance_prompt_scene:
@@ -166,12 +160,13 @@ func _ready() -> void:
 		new_node.name = &"AdvancePrompt"
 		advance_prompt_container.add_child(new_node)
 	
-	_set_advance_prompt_enabled(false)
-	_set_options_enabled(false)
+	_set_advance_prompt_transparent(true)
+	_set_options_transparent(true)
 	hide()
 
 
-# TODO: should this be handled in the physics process?
+# TODO: this should be handled in the network interpolation virtual, once we make
+# dialogues netcode-aware.
 func _process(delta: float) -> void:
 	if not is_running():
 		return
@@ -214,38 +209,17 @@ func _validate_property(property: Dictionary) -> void:
 ## Starts processing the dialogue [member data], starting with the Start Node
 ## with its ID set to [param start_id].
 func start(id: StringName = start_id) -> void:
-	if not _dialogue_parser:
-		return
-	
 	_dialogue_parser.start(id)
 
 
 ## Stops processing the dialogue tree.
 func stop() -> void:
-	if not _dialogue_parser:
-		return
-	
 	_dialogue_parser.stop()
-
-
-## Executes the ending action based on [member end_action].
-func end() -> void:
-	if is_running():
-		stop()
-	
-	match end_action:
-		EndAction.FREE:
-			queue_free()
-		EndAction.HIDE:
-			hide()
 
 
 ## Continues processing the dialogue tree from the node connected to
 ## the option at [param idx].
 func select_option(idx: int) -> void:
-	if not _dialogue_parser:
-		return
-	
 	_dialogue_parser.select_option(idx)
 
 
@@ -300,11 +274,6 @@ func set_opacity(opacity_: float) -> ScDialogueBubble:
 	return self
 
 
-func set_auto_end_enabled(auto_end_enabled_: bool) -> ScDialogueBubble:
-	auto_end_enabled = auto_end_enabled_
-	return self
-
-
 func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
 	end_action = end_action_
 	return self
@@ -314,15 +283,26 @@ func set_end_action(end_action_: EndAction) -> ScDialogueBubble:
 #region Private methods
 ## Advances dialogue. Used when there are no dialogue options in the current dialogue.
 func _advance_dialogue() -> void:
-	if _has_options:
+	if _has_options():
 		return
 	
 	select_option(0)
 
 
-## Returns the bubble width by calculating the average character's width, 
-## using a common character.[br]
-## The returned value will never exceed [member max_chars_per_line].
+func _start_auto_advance_timer() -> void:
+	var lifetime := auto_advance_base_delay \
+			+ dialogue_label.text.length() * auto_advance_character_delay
+	_auto_advance_timer.start(lifetime)
+
+
+# TODO: should account for localization and maybe calculate an actual average
+# based on the character set for the selected language. That last part could be 
+# quite painful since we'd need statistical weights for the characters in each 
+# language, but we would still need to base the "common character" on the 
+# language-specific character set.
+## Returns the bubble width in pixels by calculating the average character's
+## width, using a common character.[br]
+## [param dialogue_length] is capped at [member max_chars_per_line].
 func _calculate_bubble_width(dialogue_length: int) -> int:
 	var avg_char_width := dialogue_label.get_theme_font(&"normal_font") \
 			.get_string_size("A").x
@@ -337,19 +317,24 @@ func _get_target_position() -> Vector2:
 		else speaker_node.get_global_transform_with_canvas().origin
 
 
-## Enables options by setting their container's opacity.
-func _set_options_enabled(enabled: bool) -> void:
-	options_container.modulate.a = 1.0 if enabled else 0.0
+func _has_options() -> bool:
+	return _options.size() > 0 and not _options[0].is_empty()
 
 
-## Enables the advance prompt scene by setting its container's opacity.
-func _set_advance_prompt_enabled(enabled: bool) -> void:
-	advance_prompt_container.modulate.a = 1.0 if enabled else 0.0
+## Toggles options container's opacity between fully opaque or fully transparent.
+func _set_options_transparent(is_transparent: bool) -> void:
+	options_container.modulate.a = 0.0 if is_transparent else 1.0
+
+
+## Toggles advance prompt container's opacity between fully opaque or fully transparent.
+func _set_advance_prompt_transparent(is_transparent: bool) -> void:
+	advance_prompt_container.modulate.a = 0.0 if is_transparent else 1.0
 
 
 func _on_dialogue_started(id: String) -> void:
 	speaker_label.text = ""
 	dialogue_label.text = ""
+	_options.clear()
 	show()
 	dialogue_started.emit(id)
 
@@ -383,11 +368,11 @@ func _on_dialogue_processed(
 		else:
 			option.text = options[i].replace("[br]", "\n")
 			option.show()
-	_has_options = options.size() > 0 and not options[0].is_empty()
+	_options = options
 	
 	# Toggle the visibility of the advance prompt and the options,
 	# necessary for proper spacing
-	if _has_options:
+	if _has_options():
 		options_container.show()
 		advance_prompt_container.hide()
 	else:
@@ -396,15 +381,12 @@ func _on_dialogue_processed(
 			advance_prompt_container.show()
 	
 	# Auto-advance only if there are no options
-	if not _has_options and auto_advance_enabled:
-		var lifetime := auto_advance_base_delay \
-				+ dialogue_label.text.length() * auto_advance_character_delay
-		_lifetime_timer.timeout.connect(_advance_dialogue, CONNECT_ONE_SHOT)
-		_lifetime_timer.start(lifetime)
+	if not _has_options() and auto_advance_enabled:
+		_start_auto_advance_timer()
 	
 	# Hide options and prompt by making them transparent
-	_set_advance_prompt_enabled(false)
-	_set_options_enabled(false)
+	_set_advance_prompt_transparent(true)
+	_set_options_transparent(true)
 	
 	dialogue_processed.emit(speaker, dialogue, options)
 
@@ -413,8 +395,8 @@ func _on_option_selected(idx: int) -> void:
 	option_selected.emit(idx)
 
 
-func _on_dialogue_signal(value: String) -> void:
-	dialogue_signal.emit(value)
+func _on_dialogue_signal_emitted(value: String) -> void:
+	dialogue_signal_emitted.emit(value)
 
 
 func _on_variable_changed(variable_name: String, value) -> void:
@@ -424,20 +406,23 @@ func _on_variable_changed(variable_name: String, value) -> void:
 func _on_dialogue_ended() -> void:
 	dialogue_ended.emit()
 	
-	if auto_end_enabled:
-		end()
+	match end_action:
+		EndAction.FREE:
+			queue_free()
+		EndAction.HIDE:
+			hide()
 
 
 ## Triggered each time a dialogue text is fully shown.
 func _on_wait_effect_wait_finished() -> void:
 	# Check if one or more buttons should be displayed
-	if _has_options:
+	if _has_options():
 		# Display option buttons
-		_set_options_enabled(true)
+		_set_options_transparent(false)
 		_option_buttons[0].grab_focus()
 	elif not auto_advance_enabled:
 		# Display advance prompt node
-		_set_advance_prompt_enabled(true)
+		_set_advance_prompt_transparent(false)
 #endregion
 
 
@@ -461,9 +446,9 @@ func _set_auto_advance_enabled(value: bool) -> void:
 	advance_prompt_container.visible = not auto_advance_enabled
 
 
-func _set_options_count(value: int) -> void:
+func _editor_set_options_count(value: int) -> void:
 	options_count = value
-	if not is_node_ready():
+	if not is_node_ready() or not Engine.is_editor_hint():
 		return
 	
 	for option in _option_buttons:

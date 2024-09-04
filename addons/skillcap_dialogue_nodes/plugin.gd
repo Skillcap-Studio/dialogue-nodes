@@ -3,10 +3,6 @@ extends EditorPlugin
 
 
 const EditorScene = preload('res://addons/skillcap_dialogue_nodes/Editor.tscn')
-const DialogueBoxScene = preload('res://addons/skillcap_dialogue_nodes/objects/DialogueBox.gd')
-const DialogueBubbleScene = preload('res://addons/skillcap_dialogue_nodes/objects/DialogueBubble.gd')
-const DialogueBoxIcon = preload('res://addons/skillcap_dialogue_nodes/icons/DialogueBox.svg')
-const DialogueBubbleIcon = preload('res://addons/skillcap_dialogue_nodes/icons/DialogueBubble.svg')
 
 var editor
 
@@ -21,19 +17,6 @@ func _enter_tree():
 	editor.undo_redo = get_undo_redo()
 	
 	_make_visible(false)
-	
-	# add dialogue box and bubble nodes
-	add_custom_type(
-		'DialogueBox',
-		'Panel',
-		DialogueBoxScene,
-		DialogueBoxIcon)
-	add_custom_type(
-		'DialogueBubble',
-		'RichTextLabel',
-		DialogueBubbleScene,
-		DialogueBubbleIcon
-	)
 	
 	print_debug('Plugin Enabled')
 
