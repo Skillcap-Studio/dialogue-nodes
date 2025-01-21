@@ -15,6 +15,7 @@ func _ready():
 		$DemoSelector.add_item(label)
 	
 	dialogue_box.data = demos[0]
+	$CheckButton.set_pressed_no_signal(dialogue_box_new.auto_advance_enabled)
 
 
 func explode(_a=0):
@@ -45,3 +46,7 @@ func _on_locale_selected(index):
 			# Japanese
 			TranslationServer.set_locale('ja')
 			
+
+
+func _on_check_button_pressed() -> void:
+	dialogue_box_new.auto_advance_enabled = $CheckButton.button_pressed

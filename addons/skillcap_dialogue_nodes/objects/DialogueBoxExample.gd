@@ -87,11 +87,7 @@ signal dialogue_ended
 				button.text = 'Option '+str(idx+1)
 				button.pressed.connect(select_option.bind(idx))
 ## Icon displayed when no text options are available.
-<<<<<<<< HEAD:addons/skillcap_dialogue_nodes/objects/DialogueBoxExample.gd
 @export var next_icon: Texture2D = preload('res://addons/skillcap_dialogue_nodes/icons/Play.svg')
-========
-@export var next_icon := preload('res://addons/skillcap_dialogue_nodes/icons/Play.svg')
->>>>>>>> fcdbaec (improvement: renamed main folder):addons/skillcap_dialogue_nodes/objects/DialogueBox.gd
 ## Alignment of options.
 @export_enum('Begin', 'Center', 'End') var options_alignment := 2 :
 	set(value):

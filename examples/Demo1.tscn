@@ -73,6 +73,14 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Start Demo"
 
+[node name="CheckButton" type="CheckButton" parent="."]
+layout_mode = 0
+offset_left = 777.0
+offset_top = 316.0
+offset_right = 821.0
+offset_bottom = 340.0
+text = "Auto Advance"
+
 [node name="Locale" type="OptionButton" parent="."]
 layout_mode = 0
 offset_left = 32.0
@@ -149,6 +157,7 @@ end_action = 1
 
 [connection signal="item_selected" from="DemoSelector" to="." method="_on_demo_selected"]
 [connection signal="pressed" from="StartButton" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="CheckButton" to="." method="_on_check_button_pressed"]
 [connection signal="item_selected" from="Locale" to="." method="_on_locale_selected"]
 [connection signal="dialogue_signal" from="DialogueBoxOld" to="." method="_on_dialogue_signal"]
 [connection signal="dialogue_signal_emitted" from="DialogueBoxNew" to="." method="_on_dialogue_signal"]

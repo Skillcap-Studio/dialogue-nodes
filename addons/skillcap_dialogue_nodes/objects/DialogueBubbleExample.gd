@@ -102,15 +102,12 @@ signal dialogue_ended
 		options_container.position.y = 32
 ## Icon displayed when no text options are available.
 @export var next_icon := preload('res://addons/skillcap_dialogue_nodes/icons/Play.svg')
-<<<<<<<< HEAD:addons/skillcap_dialogue_nodes/objects/DialogueBubbleExample.gd
 ## Skip condition checks when processing options in the current dialog.
 @export var skip_options_condition_checks := false:
 	set(value):
 		skip_options_condition_checks = value
 		if _dialogue_parser:
 			_dialogue_parser.skip_options_condition_checks = value
-========
->>>>>>>> fcdbaec (improvement: renamed main folder):addons/skillcap_dialogue_nodes/objects/DialogueBubble.gd
 
 ## Contains the variable data from the [param DialogueData] parsed in an easy to access dictionary.[br]
 ## Example: [code]{ "COINS": 10, "NAME": "Obama", "ALIVE": true }[/code]
