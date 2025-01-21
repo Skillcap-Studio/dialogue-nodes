@@ -18,74 +18,12 @@ nodes = {
 "offset": Vector2(220, 0),
 "options": {
 0: {
-"condition": Array[Dictionary]([]),
-"link": &"1_3",
+"condition": {},
+"link": "END",
 "text": "Yeah!"
-},
-1: {
-"condition": Array[Dictionary]([]),
-"link": &"1_2",
-"text": "Nah"
-}
-},
-"size": Vector2(300, 273),
-"speaker": "Greg"
-},
-"1_2": {
-"dialogue": "[shake]Oh... too bad...[/shake]",
-"offset": Vector2(560, 300),
-"options": {
-0: {
-"condition": Array[Dictionary]([]),
-"link": "END",
-"text": "..."
-}
-},
-"size": Vector2(300, 256),
-"speaker": "Greg"
-},
-"1_3": {
-"dialogue": "You can write special keywords between ... for different effects.",
-"offset": Vector2(560, 0),
-"options": {
-0: {
-"condition": Array[Dictionary]([]),
-"link": &"1_4",
-"text": ""
 }
 },
 "size": Vector2(300, 240),
-"speaker": "Greg"
-},
-"1_4": {
-"dialogue": "Like u for [u]underlining[/u] or [fade start=26 length=4]fade[/fade] or [color=red]color=red[/color] or [rainbow]rainbow[/rainbow] or [shake]shake[/shake] or [wave]wave[/wave] or [tornado]tornado[/tornado]",
-"offset": Vector2(900, 0),
-"options": {
-0: {
-"condition": Array[Dictionary]([]),
-"link": &"1_5",
-"text": ""
-}
-},
-"size": Vector2(300, 240),
-"speaker": "Greg"
-},
-"1_5": {
-"dialogue": "You can even combine two or more effects to create [rainbow][wave]EVEN MORE AWESOME EFFECTS![/wave][/rainbow][br]",
-"offset": Vector2(1240, 0),
-"options": {
-0: {
-"condition": Array[Dictionary]([]),
-"link": &"1_3",
-"text": "One more time?"
-},
-1: {
-"condition": Array[Dictionary]([]),
-"link": "END",
-"text": "Got it!"
-}
-},
-"size": Vector2(300, 273),
 "speaker": "Greg"
 }
 }

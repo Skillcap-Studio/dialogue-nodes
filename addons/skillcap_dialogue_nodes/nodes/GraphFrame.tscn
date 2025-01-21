@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cpwycjf6645y8"]
 
-[ext_resource type="Script" path="res://addons/dialogue_nodes/nodes/graphFrame.gd" id="1_coo11"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/graphFrame.gd" id="1_coo11"]
 
 [node name="GraphFrame" type="GraphFrame"]
 offset_right = 400.0

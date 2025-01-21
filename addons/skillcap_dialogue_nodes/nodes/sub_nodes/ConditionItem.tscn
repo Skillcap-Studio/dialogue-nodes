@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bf83fu6tw7p1e"]
 
-[ext_resource type="Script" path="res://addons/dialogue_nodes/nodes/sub_nodes/conditionItem.gd" id="1_ycxn0"]
-[ext_resource type="Texture2D" uid="uid://cf5ef41yo6jl6" path="res://addons/dialogue_nodes/icons/Reload.svg" id="3_miu01"]
-[ext_resource type="Texture2D" uid="uid://b8o81rn8q8a43" path="res://addons/dialogue_nodes/icons/Remove.svg" id="4_ve0so"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/conditionItem.gd" id="1_ycxn0"]
+[ext_resource type="Texture2D" uid="uid://cf5ef41yo6jl6" path="res://addons/skillcap_dialogue_nodes/icons/Reload.svg" id="3_miu01"]
+[ext_resource type="Texture2D" uid="uid://b8o81rn8q8a43" path="res://addons/skillcap_dialogue_nodes/icons/Remove.svg" id="4_ve0so"]
 
 [node name="ConditionItem" type="BoxContainer"]
 offset_right = 268.0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://qhs1fcypr3p8"]
 
-[ext_resource type="Script" path="res://addons/dialogue_nodes/nodes/nestNode.gd" id="1_qag2c"]
-[ext_resource type="Texture2D" uid="uid://buayifvickq2l" path="res://addons/dialogue_nodes/icons/Folder.svg" id="1_qkdnt"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/nestNode.gd" id="1_qag2c"]
+[ext_resource type="Texture2D" uid="uid://buayifvickq2l" path="res://addons/skillcap_dialogue_nodes/icons/Folder.svg" id="1_qkdnt"]
 
 [node name="NestNode" type="GraphNode"]
 offset_right = 254.0

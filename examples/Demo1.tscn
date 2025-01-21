@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://c303qivlsn30t" path="res://examples/ExampleCharacters.tres" id="6_arg21"]
 [ext_resource type="Resource" uid="uid://b4os1qum2hx0x" path="res://examples/ExampleSignals.tres" id="7_18syg"]
 [ext_resource type="Resource" uid="uid://cbu4k4hs8fk5s" path="res://examples/ExampleVariables.tres" id="8_4fu3f"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueBox.gd" id="9_s4y1y"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueBoxExample.gd" id="9_s4y1y"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="10_wwm1y"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="11_iuh66"]
 [ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="12_cnev0"]
@@ -80,7 +80,6 @@ offset_top = 32.0
 offset_right = 82.0
 offset_bottom = 64.0
 selected = 0
-selected = 0
 item_count = 2
 popup/item_0/text = "en"
 popup/item_1/text = "ja"
@@ -141,6 +140,7 @@ offset_right = 123.0
 offset_bottom = -101.0
 grow_horizontal = 2
 grow_vertical = 0
+auto_advance_enabled = true
 auto_advance_base_delay = 0.1
 auto_advance_character_delay = 0.03
 font_size_dialogue_text = 16
@@ -151,4 +151,4 @@ end_action = 1
 [connection signal="pressed" from="StartButton" to="." method="_on_Button_pressed"]
 [connection signal="item_selected" from="Locale" to="." method="_on_locale_selected"]
 [connection signal="dialogue_signal" from="DialogueBoxOld" to="." method="_on_dialogue_signal"]
-[connection signal="dialogue_signal" from="DialogueBoxNew" to="." method="_on_dialogue_signal"]
+[connection signal="dialogue_signal_emitted" from="DialogueBoxNew" to="." method="_on_dialogue_signal"]

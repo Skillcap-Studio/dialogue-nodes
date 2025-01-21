@@ -19,41 +19,13 @@ Additionally you can pass a value with the signal and use it in your code.",
 "offset": Vector2(220, 0),
 "options": {
 0: {
-"condition": Array[Dictionary]([]),
-"link": &"3_1",
+"condition": {},
+"link": "END",
 "text": "Try it!"
-},
-1: {
-"condition": Array[Dictionary]([]),
-"link": "END",
-"text": "Got it, bye!"
 }
 },
-"size": Vector2(307.167, 307),
+"size": Vector2(340, 340),
 "speaker": "Greg"
-},
-"1_2": {
-"dialogue": "The signal triggered the code in the demo to create an explosion.",
-"offset": Vector2(800, 0),
-"options": {
-0: {
-"condition": Array[Dictionary]([]),
-"link": &"3_1",
-"text": "Do it again!"
-},
-1: {
-"condition": Array[Dictionary]([]),
-"link": "END",
-"text": "Got it!"
-}
-},
-"size": Vector2(300, 307),
-"speaker": "Greg"
-},
-"3_1": {
-"link": &"1_2",
-"offset": Vector2(560, 0),
-"signalValue": "explode"
 }
 }
 variables = {}

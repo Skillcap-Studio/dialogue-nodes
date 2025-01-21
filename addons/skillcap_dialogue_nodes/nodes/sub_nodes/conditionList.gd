@@ -6,7 +6,7 @@ signal modified
 
 @onready var add_button: Button = $AddButton
 
-const ConditionItemScene := preload('res://addons/dialogue_nodes/nodes/sub_nodes/ConditionItem.tscn')
+const ConditionItemScene := preload('res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/ConditionItem.tscn')
 
 var undo_redo: EditorUndoRedoManager
 

@@ -7,17 +7,17 @@ signal characters_updated(character_list: Array[Character])
 signal run_requested(start_node_idx: int)
 
 @export var NodeScenes: Array[PackedScene] = [
-	preload('res://addons/dialogue_nodes/nodes/StartNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/DialogueNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/CommentNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/SignalNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/SetNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/ConditionNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/NestNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/ForkNode.tscn'),
-	preload('res://addons/dialogue_nodes/nodes/GraphFrame.tscn')
+	preload('res://addons/skillcap_dialogue_nodes/nodes/StartNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/DialogueNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/CommentNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/SignalNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/SetNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/ConditionNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/NestNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/ForkNode.tscn'),
+	preload('res://addons/skillcap_dialogue_nodes/nodes/GraphFrame.tscn')
 ]
-@export var detach_icon: Texture2D = preload('res://addons/dialogue_nodes/icons/ExternalLink.svg')
+@export var detach_icon: Texture2D = preload('res://addons/skillcap_dialogue_nodes/icons/ExternalLink.svg')
 
 @onready var popup_menu := $PopupMenu
 

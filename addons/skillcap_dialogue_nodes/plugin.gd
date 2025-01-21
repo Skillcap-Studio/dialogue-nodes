@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 
-const EditorScene = preload('res://addons/skillcap_dialogue_nodes/Editor.tscn')
+const EditorScene = preload("res://addons/skillcap_dialogue_nodes/Editor.tscn")
 
 var editor: Control
 
@@ -18,7 +18,7 @@ func _enter_tree() -> void:
 	
 	_make_visible(false)
 	
-	print_debug('Plugin Enabled')
+	print_debug("Skillcap Dialogue - Plugin Enabled")
 
 
 func _exit_tree() -> void:
@@ -26,9 +26,7 @@ func _exit_tree() -> void:
 	if is_instance_valid(editor):
 		editor.queue_free()
 	
-	remove_custom_type('DialogueBox')
-	
-	print_debug('Plugin Disabled')
+	print_debug("Skillcap Dialogue - Plugin Disabled")
 
 
 func _has_main_screen() -> bool:
@@ -41,11 +39,11 @@ func _make_visible(visible) -> void:
 
 
 func _get_plugin_name() -> String:
-	return 'Dialogue'
+	return "Skillcap Dialogue"
 
 
 func _get_plugin_icon():
-	return preload('res://addons/skillcap_dialogue_nodes/icons/Dialogue.svg')
+	return preload("res://addons/skillcap_dialogue_nodes/icons/Dialogue.svg")
 
 
 func _handles(object) -> bool:

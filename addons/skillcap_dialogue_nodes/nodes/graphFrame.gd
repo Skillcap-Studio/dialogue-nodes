@@ -4,9 +4,9 @@ extends GraphFrame
 
 signal modified
 
-@export var edit_icon: Texture2D = preload('res://addons/dialogue_nodes/icons/Edit.svg')
-@export var check_icon: Texture2D = preload('res://addons/dialogue_nodes/icons/Check.svg')
-@export var cross_icon: Texture2D = preload('res://addons/dialogue_nodes/icons/Cross.svg')
+@export var edit_icon: Texture2D = preload('res://addons/skillcap_dialogue_nodes/icons/Edit.svg')
+@export var check_icon: Texture2D = preload('res://addons/skillcap_dialogue_nodes/icons/Check.svg')
+@export var cross_icon: Texture2D = preload('res://addons/skillcap_dialogue_nodes/icons/Cross.svg')
 
 @onready var instruction_label: Label = $InstructionLabel
 

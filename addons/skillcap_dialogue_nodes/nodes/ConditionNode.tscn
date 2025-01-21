@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://3ofh51q0vhmg"]
 
-[ext_resource type="Script" path="res://addons/dialogue_nodes/nodes/conditionNode.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://d2m5p53k8qhhp" path="res://addons/dialogue_nodes/nodes/sub_nodes/ConditionList.tscn" id="2_exmrd"]
+[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/conditionNode.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://d2m5p53k8qhhp" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/ConditionList.tscn" id="2_exmrd"]
 
 [node name="ConditionNode" type="GraphNode"]
 custom_minimum_size = Vector2(300, 0)
