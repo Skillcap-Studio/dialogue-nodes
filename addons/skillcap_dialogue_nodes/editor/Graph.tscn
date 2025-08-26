@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c77r4qmw3a416"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/editor/graph.gd" id="1_7isyk"]
+[ext_resource type="Script" uid="uid://ssh1l1e7u76q" path="res://addons/skillcap_dialogue_nodes/editor/graph.gd" id="1_7isyk"]
 
 [node name="Graph" type="GraphEdit"]
 custom_minimum_size = Vector2(400, 0)

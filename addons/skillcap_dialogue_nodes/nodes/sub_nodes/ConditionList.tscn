@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2m5p53k8qhhp"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/conditionList.gd" id="1_bfxq3"]
-[ext_resource type="Texture2D" uid="uid://cj0m8q8hgm0ed" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_t4u1f"]
+[ext_resource type="Script" uid="uid://c0alsndgw1t5" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/conditionList.gd" id="1_bfxq3"]
+[ext_resource type="Texture2D" uid="uid://co4guaqumclv7" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_t4u1f"]
 
 [node name="ConditionList" type="BoxContainer"]
 offset_right = 200.0

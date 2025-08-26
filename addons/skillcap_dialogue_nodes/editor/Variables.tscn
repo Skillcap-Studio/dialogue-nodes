@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://b3i6c8iuh7ii"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/editor/variables.gd" id="1_0ltmm"]
-[ext_resource type="Texture2D" uid="uid://cj0m8q8hgm0ed" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_vukkj"]
+[ext_resource type="Script" uid="uid://b03ucfd38q33u" path="res://addons/skillcap_dialogue_nodes/editor/variables.gd" id="1_0ltmm"]
+[ext_resource type="Texture2D" uid="uid://co4guaqumclv7" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_vukkj"]
 
 [node name="Variables" type="VBoxContainer"]
 offset_right = 200.0

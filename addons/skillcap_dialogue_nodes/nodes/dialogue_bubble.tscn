@@ -1,11 +1,11 @@
 [gd_scene load_steps=11 format=3 uid="uid://cjbau1iog5b6u"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/DialogueParser.gd" id="1_cxv4l"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_bubble.gd" id="1_xuoxo"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="2_afww6"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="3_nq1fs"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="4_ua0e7"]
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_label.gd" id="5_6yd0c"]
+[ext_resource type="Script" uid="uid://cn70frt44ixhh" path="res://addons/skillcap_dialogue_nodes/objects/DialogueParser.gd" id="1_cxv4l"]
+[ext_resource type="Script" uid="uid://dg0df5vtgwute" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_bubble.gd" id="1_xuoxo"]
+[ext_resource type="Script" uid="uid://bxwflvrolipe8" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeWait.gd" id="2_afww6"]
+[ext_resource type="Script" uid="uid://ddo8bpf0avktc" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeGhost.gd" id="3_nq1fs"]
+[ext_resource type="Script" uid="uid://bsr8lbslmli6t" path="res://addons/skillcap_dialogue_nodes/objects/bbcodeMatrix.gd" id="4_ua0e7"]
+[ext_resource type="Script" uid="uid://c8qmje5wbc6jp" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_label.gd" id="5_6yd0c"]
 [ext_resource type="PackedScene" uid="uid://xjqv0hpmkgh2" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.tscn" id="5_umubx"]
 
 [sub_resource type="RichTextEffect" id="RichTextEffect_6fxej"]

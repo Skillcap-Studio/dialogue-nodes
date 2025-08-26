@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://blp6ulybtwgcj"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/option.gd" id="1_hro80"]
+[ext_resource type="Script" uid="uid://btntiom3jwy4f" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/option.gd" id="1_hro80"]
 [ext_resource type="Texture2D" uid="uid://b10pucyepsb2s" path="res://addons/skillcap_dialogue_nodes/icons/Filter.svg" id="1_pklbs"]
 [ext_resource type="PackedScene" uid="uid://d2m5p53k8qhhp" path="res://addons/skillcap_dialogue_nodes/nodes/sub_nodes/ConditionList.tscn" id="3_figav"]
 

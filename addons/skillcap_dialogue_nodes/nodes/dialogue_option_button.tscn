@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://xjqv0hpmkgh2"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.gd" id="1_483ch"]
+[ext_resource type="Script" uid="uid://dc1dlmjt6qfef" path="res://addons/skillcap_dialogue_nodes/nodes/dialogue_option_button.gd" id="1_483ch"]
 
 [node name="DialogueOptionButton" type="Button"]
 offset_right = 8.0

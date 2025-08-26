@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bsv8k2uht3jij"]
 
-[ext_resource type="Script" path="res://addons/skillcap_dialogue_nodes/nodes/forkNode.gd" id="1_8xybu"]
-[ext_resource type="Texture2D" uid="uid://cj0m8q8hgm0ed" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_3eo50"]
+[ext_resource type="Script" uid="uid://crrrwbklwk4jf" path="res://addons/skillcap_dialogue_nodes/nodes/forkNode.gd" id="1_8xybu"]
+[ext_resource type="Texture2D" uid="uid://co4guaqumclv7" path="res://addons/skillcap_dialogue_nodes/icons/Add.svg" id="2_3eo50"]
 
 [node name="ForkNode" type="GraphNode"]
 custom_minimum_size = Vector2(300, 0)
