@@ -192,7 +192,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed(skip_input_action) and not auto_advance_enabled:
+	if Input.is_action_just_pressed(skip_input_action):
 		if not _wait_effect.finished and not _wait_effect.skip:
 			# Skip dialogue, i.e. show it fully
 			_wait_effect.skip = true
@@ -205,7 +205,7 @@ func _unhandled_input(_event: InputEvent) -> void:
 #region Public Methods
 ## Starts processing the dialogue [member data], starting with the Start Node
 ## with its ID set to [param start_id].
-func start(id: StringName = start_id) -> void:
+func start(id := start_id) -> void:
 	_dialogue_parser.start(id)
 
 
