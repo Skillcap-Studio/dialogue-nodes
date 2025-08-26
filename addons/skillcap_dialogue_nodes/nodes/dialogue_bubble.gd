@@ -108,7 +108,7 @@ var _wait_effect: RichTextWait
 var _option_buttons: Array[Button] = []
 ## Gets set once [signal dialogue_processed] is emitted, if there are options.
 ## Do not read this value directly, use [method _has_options] instead.
-var _options := []
+var _options: Array[String] = []
 
 @onready var panel: PanelContainer = %Panel
 @onready var dialogue_label: ScDialogueLabel = %DialogueLabel
@@ -127,8 +127,7 @@ func _ready() -> void:
 		option.pressed.connect(select_option.bind(i))
 		_option_buttons.append(option)
 	
-	# Reset the panel's size when [member dialogue_label] or 
-	# [member options_container] resize
+	# Reset the panel's size when dialogue text or options resize
 	dialogue_label.resized.connect(func(): panel.size = Vector2.ZERO)
 	options_container.resized.connect(func(): panel.size = Vector2.ZERO)
 	
@@ -165,8 +164,20 @@ func _ready() -> void:
 	hide()
 
 
-# TODO: this should be handled in the network interpolation virtual, once we make
-# dialogues netcode-aware.
+func _validate_property(property: Dictionary) -> void:
+	match property.name:
+		"auto_advance_base_delay":
+			if auto_advance_enabled:
+				property.usage = PROPERTY_USAGE_DEFAULT
+			else:
+				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
+		"auto_advance_character_delay":
+			if auto_advance_enabled:
+				property.usage = PROPERTY_USAGE_DEFAULT
+			else:
+				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
+
+
 func _process(delta: float) -> void:
 	if not is_running():
 		return
@@ -180,7 +191,7 @@ func _process(delta: float) -> void:
 		dialogue_label.get_v_scroll_bar().value += int(scroll_amt * scroll_speed)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _unhandled_input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed(skip_input_action) and not auto_advance_enabled:
 		if not _wait_effect.finished and not _wait_effect.skip:
 			# Skip dialogue, i.e. show it fully
@@ -188,20 +199,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			# Advance dialogue
 			_advance_dialogue()
-
-
-func _validate_property(property: Dictionary) -> void:
-	match property.name:
-		"auto_advance_base_delay":
-			if auto_advance_enabled:
-				property.usage = PROPERTY_USAGE_DEFAULT
-			else:
-				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
-		"auto_advance_character_delay":
-			if auto_advance_enabled:
-				property.usage = PROPERTY_USAGE_DEFAULT
-			else:
-				property.usage = PROPERTY_USAGE_NO_EDITOR | PROPERTY_USAGE_STORAGE
 #endregion
 
 
@@ -448,6 +445,7 @@ func _set_auto_advance_enabled(value: bool) -> void:
 
 func _editor_set_options_count(value: int) -> void:
 	options_count = value
+	
 	if not is_node_ready() or not Engine.is_editor_hint():
 		return
 	
